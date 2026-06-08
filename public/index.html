@@ -335,175 +335,67 @@ select.fi{cursor:pointer}
 <div class="toast" id="toastEl"></div>
 
 <script>
-// ── RECETAS (basadas en comidas favoritas de la familia) ─────────────────────
 const RCP={
 desayuno:[
-{id:'d1',name:'Huevos revueltos con arepa y jugo',emoji:'🍳',time:'15 min',
- desc:'Huevos esponjosos con mantequilla, arepa dorada y jugo de naranja natural.',
- ings:[{n:'Huevos',q:4,u:'und'},{n:'Arepa',q:3,u:'und'},{n:'Mantequilla',q:1,u:'cda'},{n:'Naranja',q:3,u:'und'}],
- kidFriendly:true,kidNote:'⚡ Zinc + hierro del huevo con vitamina C del jugo = energía para todo el día de Thiago'},
+{id:'d1',name:'Huevos revueltos con arepa y jugo',emoji:'🍳',time:'15 min',desc:'Huevos esponjosos con mantequilla, arepa dorada y jugo de naranja.',ings:[{n:'Huevos',q:4,u:'und'},{n:'Arepa',q:3,u:'und'},{n:'Mantequilla',q:1,u:'cda'},{n:'Naranja',q:3,u:'und'}],kidFriendly:true,kidNote:'⚡ Zinc + hierro del huevo con vitamina C del jugo = energía máxima para Thiago'},
 
-{id:'d2',name:'Caldo de costilla (desayuno)',emoji:'🍵',time:'50 min',
- desc:'Caldo reconfortante de costilla de res con papa, cilantro y arepa. Desayuno colombiano.',
- ings:[{n:'Costilla de res',q:400,u:'g'},{n:'Papa',q:3,u:'und'},{n:'Cebolla larga',q:2,u:'und'},{n:'Cilantro',q:0.5,u:'atado'},{n:'Ajo',q:2,u:'dientes'},{n:'Arepa',q:3,u:'und'}],
- kidFriendly:true,kidNote:'⚡ Hierro HEM de la costilla + colágeno para los huesos. El más nutritivo de Colombia'},
-
-{id:'d3',name:'Huevos pericos con hogao y arepa',emoji:'🍳',time:'15 min',
- desc:'Huevos revueltos con tomate y cebolla fritos en hogao. Arepa dorada.',
- ings:[{n:'Huevos',q:4,u:'und'},{n:'Tomate',q:2,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Aceite',q:1,u:'cda'},{n:'Arepa',q:3,u:'und'},{n:'Cilantro',q:0.25,u:'atado'}],
- kidFriendly:true,kidNote:'⚡ Zinc + proteína del huevo. El hogao aporta vitamina C para absorber más hierro'},
-
-{id:'d4',name:'Changua con huevo escalfado',emoji:'🥛',time:'15 min',
- desc:'Sopa de leche con huevo escalfado y pan. Tradición colombiana llena de calcio.',
- ings:[{n:'Leche',q:3,u:'tazas'},{n:'Huevos',q:3,u:'und'},{n:'Pan',q:3,u:'tajadas'},{n:'Cebolla larga',q:2,u:'und'},{n:'Cilantro',q:0.25,u:'atado'}],
- kidFriendly:true,kidNote:'🦴 Calcio + proteína completa. Perfecto para el crecimiento de Thiago'},
-
-{id:'d5',name:'Avena con leche, banano y miel',emoji:'🥣',time:'10 min',
- desc:'Avena cremosa con leche entera, banano maduro y miel. Sencillo y nutritivo.',
- ings:[{n:'Avena',q:2,u:'tazas'},{n:'Leche',q:2,u:'tazas'},{n:'Banano',q:2,u:'und'},{n:'Miel',q:2,u:'cda'}],
- kidFriendly:true,kidNote:'💪 Calcio + potasio del banano + energía sostenida para que Thiago esté activo'},
-
-{id:'d6',name:'Huevos fritos con tajadas y jugo',emoji:'🍳',time:'15 min',
- desc:'Huevos fritos con tajadas de plátano maduro doradas y jugo de naranja.',
- ings:[{n:'Huevos',q:4,u:'und'},{n:'Plátano maduro',q:2,u:'und'},{n:'Aceite',q:2,u:'cda'},{n:'Naranja',q:3,u:'und'}],
- kidFriendly:true,kidNote:'⚡ Hierro del huevo + potasio del plátano + vitamina C del jugo. ¡Thiago lo ama!'},
-
-{id:'d7',name:'Arepa con queso blanco y aguacate',emoji:'🫓',time:'10 min',
- desc:'Arepa dorada con queso blanco abundante y aguacate cremoso.',
- ings:[{n:'Arepa',q:3,u:'und'},{n:'Queso blanco',q:200,u:'g'},{n:'Aguacate',q:1,u:'und'},{n:'Mantequilla',q:1,u:'cda'}],
- kidFriendly:true,kidNote:'🔥 Grasas saludables del aguacate + calcio del queso. Hipercalórico para Thiago'},
-
-{id:'d8',name:'Batido de banano con maní y tostadas',emoji:'🥤',time:'5 min',
- desc:'Batido espeso de banano, leche y mantequilla de maní. Con tostadas de pan.',
- ings:[{n:'Banano',q:3,u:'und'},{n:'Leche',q:2,u:'tazas'},{n:'Mantequilla de maní',q:3,u:'cda'},{n:'Miel',q:1,u:'cda'},{n:'Pan integral',q:4,u:'tajadas'}],
- kidFriendly:true,kidNote:'🔥 HIPERCALÓRICO: diseñado para que Thiago suba de peso de forma sana y deliciosa'},
-
-{id:'d9',name:'Colada de maicena con leche y fruta',emoji:'🥤',time:'10 min',
- desc:'Colada espesa con leche entera, maicena, canela y banano picado.',
- ings:[{n:'Maicena',q:3,u:'cda'},{n:'Leche',q:3,u:'tazas'},{n:'Azúcar',q:2,u:'cda'},{n:'Banano',q:1,u:'und'},{n:'Canela',q:1,u:'pizca'}],
- kidFriendly:true,kidNote:'💧 Calorías fáciles + calcio. Ideal para Thiago cuando no tiene apetito'},
-
-{id:'d10',name:'Huevos revueltos con espinaca y tostadas',emoji:'🥚',time:'15 min',
- desc:'Huevos con espinaca fresca salteada, tostadas integrales y jugo.',
- ings:[{n:'Huevos',q:4,u:'und'},{n:'Espinaca',q:100,u:'g'},{n:'Tomate',q:1,u:'und'},{n:'Aceite',q:1,u:'cda'},{n:'Pan integral',q:3,u:'tajadas'},{n:'Naranja',q:2,u:'und'}],
- kidFriendly:true,kidNote:'⚡ Hierro de la espinaca + zinc del huevo + vitamina C del jugo = máxima energía'}
+{id:'d2',name:'Caldo de costilla (desayuno)',emoji:'🍵',time:'50 min',desc:'Caldo reconfortante de costilla con papa, cilantro y arepa. Desayuno colombiano clásico.',ings:[{n:'Costilla de res',q:400,u:'g'},{n:'Papa',q:3,u:'und'},{n:'Cebolla larga',q:2,u:'und'},{n:'Cilantro',q:0.5,u:'atado'},{n:'Ajo',q:2,u:'dientes'},{n:'Arepa',q:3,u:'und'}],kidFriendly:true,kidNote:'⚡ Hierro HEM + colágeno de la costilla para huesos y energía de Thiago'},
+{id:'d3',name:'Huevos pericos con hogao y arepa',emoji:'🍳',time:'15 min',desc:'Huevos revueltos en hogao de tomate y cebolla. Con arepa y aguacate.',ings:[{n:'Huevos',q:4,u:'und'},{n:'Tomate',q:2,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Aceite',q:1,u:'cda'},{n:'Arepa',q:3,u:'und'},{n:'Aguacate',q:0.5,u:'und'}],kidFriendly:true,kidNote:'⚡ Zinc del huevo + vitamina C del hogao = hierro bien absorbido para Thiago'},
+{id:'d4',name:'Changua con huevo escalfado',emoji:'🥛',time:'15 min',desc:'Sopa de leche con huevo escalfado, cebolla larga y pan. Tradición colombiana.',ings:[{n:'Leche',q:3,u:'tazas'},{n:'Huevos',q:3,u:'und'},{n:'Pan',q:3,u:'tajadas'},{n:'Cebolla larga',q:2,u:'und'},{n:'Cilantro',q:0.25,u:'atado'}],kidFriendly:true,kidNote:'🦴 Calcio + proteína completa. Perfecto para el crecimiento de Thiago'},
+{id:'d5',name:'Avena con leche, banano y miel',emoji:'🥣',time:'10 min',desc:'Avena cremosa con leche entera caliente, banano maduro y miel.',ings:[{n:'Avena',q:2,u:'tazas'},{n:'Leche',q:2,u:'tazas'},{n:'Banano',q:2,u:'und'},{n:'Miel',q:2,u:'cda'}],kidFriendly:true,kidNote:'💪 Calcio + potasio del banano + energía sostenida para que Thiago esté activo'},
+{id:'d6',name:'Huevos fritos con tajadas y jugo',emoji:'🍳',time:'15 min',desc:'Huevos fritos con tajadas doradas de plátano maduro y jugo de naranja.',ings:[{n:'Huevos',q:4,u:'und'},{n:'Plátano maduro',q:2,u:'und'},{n:'Aceite',q:2,u:'cda'},{n:'Naranja',q:3,u:'und'}],kidFriendly:true,kidNote:'⚡ Hierro + potasio del plátano + vitamina C del jugo. ¡Thiago lo ama!'},
+{id:'d7',name:'Arepa con queso blanco y aguacate',emoji:'🫓',time:'10 min',desc:'Arepa dorada con queso blanco abundante y aguacate cremoso.',ings:[{n:'Arepa',q:3,u:'und'},{n:'Queso blanco',q:200,u:'g'},{n:'Aguacate',q:1,u:'und'},{n:'Mantequilla',q:1,u:'cda'}],kidFriendly:true,kidNote:'🔥 Grasas saludables del aguacate + calcio del queso. Hipercalórico para Thiago'},
+{id:'d8',name:'Batido de banano y maní con tostadas',emoji:'🥤',time:'5 min',desc:'Batido espeso de banano, leche entera y mantequilla de maní. Con tostadas.',ings:[{n:'Banano',q:3,u:'und'},{n:'Leche',q:2,u:'tazas'},{n:'Mantequilla de maní',q:3,u:'cda'},{n:'Miel',q:1,u:'cda'},{n:'Pan integral',q:4,u:'tajadas'}],kidFriendly:true,kidNote:'🔥 HIPERCALÓRICO: grasas saludables + proteína para que Thiago suba de peso'},
+{id:'d9',name:'Colada de maicena con leche y canela',emoji:'🥤',time:'10 min',desc:'Colada espesa y dulce con leche entera, canela y banano picado.',ings:[{n:'Maicena',q:3,u:'cda'},{n:'Leche',q:3,u:'tazas'},{n:'Azúcar',q:2,u:'cda'},{n:'Banano',q:1,u:'und'},{n:'Canela',q:1,u:'pizca'}],kidFriendly:true,kidNote:'💧 Calorías fáciles + calcio. Ideal para Thiago cuando no tiene apetito'},
+{id:'d10',name:'Huevos con espinaca y tostadas',emoji:'🥚',time:'15 min',desc:'Huevos revueltos con espinaca fresca salteada, tostadas y jugo de naranja.',ings:[{n:'Huevos',q:4,u:'und'},{n:'Espinaca',q:100,u:'g'},{n:'Tomate',q:1,u:'und'},{n:'Aceite',q:1,u:'cda'},{n:'Pan integral',q:3,u:'tajadas'},{n:'Naranja',q:2,u:'und'}],kidFriendly:true,kidNote:'⚡ Hierro de la espinaca + zinc del huevo + vitamina C = máxima energía'},
+{id:'d11',name:'Arepa de chócolo con queso',emoji:'🌽',time:'10 min',desc:'Arepa de chócolo dulce con queso blanco derretido y chocolate caliente.',ings:[{n:'Arepa de chócolo',q:3,u:'und'},{n:'Queso blanco',q:180,u:'g'},{n:'Mantequilla',q:1,u:'cda'},{n:'Leche',q:2,u:'tazas'},{n:'Chocolate',q:2,u:'und'}],kidFriendly:true,kidNote:'🦴 Calcio del queso + energía del maíz dulce. ¡A Thiago le encanta!'},
+{id:'d12',name:'Revuelto de papa y huevo con arepa',emoji:'🥔',time:'20 min',desc:'Papa cocida en cubitos revuelta con huevo y cebolla. Con arepa.',ings:[{n:'Huevos',q:4,u:'und'},{n:'Papa',q:2,u:'und'},{n:'Cebolla',q:0.5,u:'und'},{n:'Aceite',q:2,u:'cda'},{n:'Arepa',q:3,u:'und'}],kidFriendly:true,kidNote:'⚡ Zinc del huevo + energía de la papa. Thiago siempre pide más'},
+{id:'d13',name:'Huevos al plato con chorizo y arepa',emoji:'🍳',time:'15 min',desc:'Huevos al plato con chorizo suave colombiano y arepa dorada.',ings:[{n:'Huevos',q:4,u:'und'},{n:'Chorizo',q:2,u:'und'},{n:'Arepa',q:3,u:'und'},{n:'Aceite',q:1,u:'cda'},{n:'Tomate',q:1,u:'und'}],kidFriendly:true,kidNote:'⚡ Proteína + hierro + zinc. Desayuno que le da energía a Thiago todo el día'},
+{id:'d14',name:'Tostadas con maní y banano',emoji:'🍞',time:'5 min',desc:'Pan tostado con mantequilla de maní y rodajas de banano. Sencillo y muy nutritivo.',ings:[{n:'Pan integral',q:6,u:'tajadas'},{n:'Mantequilla de maní',q:4,u:'cda'},{n:'Banano',q:3,u:'und'},{n:'Miel',q:2,u:'cda'}],kidFriendly:true,kidNote:'🔥 Grasas saludables + potasio del banano. Hipercalórico y rápido para Thiago'}
 ],
 
 almuerzo:[
-{id:'a1',name:'Arroz con pollo',emoji:'🍗',time:'45 min',
- desc:'Arroz esponjoso cocinado con pollo, zanahoria, arveja y ajo. El clásico de la familia.',
- ings:[{n:'Arroz',q:2,u:'tazas'},{n:'Pechuga de pollo',q:600,u:'g'},{n:'Zanahoria',q:1,u:'und'},{n:'Arveja',q:100,u:'g'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Aceite',q:2,u:'cda'},{n:'Caldo de pollo',q:1,u:'taza'}],
- kidFriendly:true,kidNote:'💪 Zinc del pollo + proteína completa. El arroz con pollo que todos piden'},
-
-{id:'a2',name:'Sudado de pollo con papa y arroz',emoji:'🍲',time:'45 min',
- desc:'Pollo sudado en hogao de tomate y cebolla con papas tiernas. Con arroz blanco.',
- ings:[{n:'Pollo (piezas)',q:800,u:'g'},{n:'Papa',q:4,u:'und'},{n:'Tomate',q:2,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Cilantro',q:0.5,u:'atado'},{n:'Aceite',q:2,u:'cda'},{n:'Arroz',q:2,u:'tazas'}],
- kidFriendly:true,kidNote:'💪 Zinc del pollo + vitamina C del hogao ayuda a absorber el hierro de Thiago'},
-
-{id:'a3',name:'Sudado de carne con papa y arroz',emoji:'🫕',time:'50 min',
- desc:'Carne de res sudada en salsa de tomate con papas. Con arroz blanco y ensalada.',
- ings:[{n:'Carne de res',q:600,u:'g'},{n:'Papa',q:4,u:'und'},{n:'Tomate',q:2,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Cilantro',q:0.5,u:'atado'},{n:'Aceite',q:2,u:'cda'},{n:'Arroz',q:2,u:'tazas'}],
- kidFriendly:true,kidNote:'⚡ Hierro HEM de la res — el de mejor absorción para la energía de Thiago'},
-
-{id:'a4',name:'Sopa de alas con papa y fideos',emoji:'🍜',time:'50 min',
- desc:'Sopa sustanciosa de alas de pollo con papa, fideos, zanahoria y mazorca.',
- ings:[{n:'Alas de pollo',q:800,u:'g'},{n:'Papa',q:3,u:'und'},{n:'Fideos',q:100,u:'g'},{n:'Zanahoria',q:2,u:'und'},{n:'Mazorca',q:1,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Cilantro',q:0.5,u:'atado'},{n:'Ajo',q:2,u:'dientes'}],
- kidFriendly:true,kidNote:'🦴 Colágeno de las alas + vitamina A de la zanahoria. Sopa que Thiago pide repetir'},
-
-{id:'a5',name:'Carne con brócoli y zucchini',emoji:'🥦',time:'30 min',
- desc:'Tiras de res saltadas con brócoli y zucchini en salsa de ajo. Con arroz blanco.',
- ings:[{n:'Carne de res',q:500,u:'g'},{n:'Brócoli',q:300,u:'g'},{n:'Zucchini',q:2,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Salsa de soja',q:2,u:'cda'},{n:'Aceite de oliva',q:2,u:'cda'},{n:'Arroz',q:2,u:'tazas'}],
- kidFriendly:true,kidNote:'⚡ Hierro de la res + vitamina C del brócoli = hierro absorbido x3 para Thiago'},
-
-{id:'a6',name:'Carne asada con arroz y ensalada',emoji:'🥩',time:'30 min',
- desc:'Lomo de res a la plancha jugoso, con arroz y ensalada de lechuga y tomate.',
- ings:[{n:'Lomo de res',q:600,u:'g'},{n:'Arroz',q:2,u:'tazas'},{n:'Lechuga',q:0.5,u:'und'},{n:'Tomate',q:2,u:'und'},{n:'Limón',q:1,u:'und'},{n:'Aceite de oliva',q:2,u:'cda'},{n:'Ajo',q:2,u:'dientes'}],
- kidFriendly:true,kidNote:'⚡ HIERRO HEM del lomo: el más fácil de absorber. Clave para la energía de Thiago'},
-
-{id:'a7',name:'Pechuga a la plancha con arroz',emoji:'🍗',time:'25 min',
- desc:'Pechuga marinada al limón y ajo, a la plancha. Con arroz y ensalada.',
- ings:[{n:'Pechuga de pollo',q:600,u:'g'},{n:'Arroz',q:2,u:'tazas'},{n:'Limón',q:2,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Aceite de oliva',q:2,u:'cda'},{n:'Lechuga',q:0.5,u:'und'},{n:'Tomate',q:2,u:'und'}],
- kidFriendly:true,kidNote:'💪 Zinc del pollo + proteína magra. Jugosa y sabrosa para toda la familia'},
-
-{id:'a8',name:'Pescado al horno con arroz y ensalada',emoji:'🐟',time:'35 min',
- desc:'Filete de pescado al horno con limón, ajo y tomate. Con arroz y ensalada.',
- ings:[{n:'Filete de pescado',q:600,u:'g'},{n:'Arroz',q:2,u:'tazas'},{n:'Limón',q:2,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Tomate',q:2,u:'und'},{n:'Aceite de oliva',q:2,u:'cda'},{n:'Cilantro',q:0.25,u:'atado'}],
- kidFriendly:true,kidNote:'🧠 Omega-3 del pescado para el cerebro y concentración de Thiago'},
-
-{id:'a9',name:'Pasta con carne molida en salsa de tomate',emoji:'🍝',time:'30 min',
- desc:'Pasta en salsa de tomate casera con carne molida, ajo y pimentón.',
- ings:[{n:'Pasta',q:400,u:'g'},{n:'Carne molida',q:400,u:'g'},{n:'Tomate',q:4,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Pimentón',q:1,u:'und'},{n:'Aceite',q:2,u:'cda'}],
- kidFriendly:true,kidNote:'⚡ Hierro de la carne molida + vitamina C del tomate. La pasta que Thiago termina siempre'},
-
-{id:'a10',name:'Lentejas con arroz y tajadas',emoji:'🍲',time:'45 min',
- desc:'Lentejas en guiso con zanahoria, cebolla y ajo. Con arroz y tajadas de maduro.',
- ings:[{n:'Lentejas',q:300,u:'g'},{n:'Arroz',q:2,u:'tazas'},{n:'Plátano maduro',q:2,u:'und'},{n:'Zanahoria',q:1,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:2,u:'dientes'},{n:'Aceite',q:2,u:'cda'},{n:'Cilantro',q:0.25,u:'atado'}],
- kidFriendly:true,kidNote:'⚡ Hierro de las lentejas + potasio del maduro. Dar jugo de naranja triplica absorción'},
-
-{id:'a11',name:'Frijoles con arroz y aguacate',emoji:'🫘',time:'60 min',
- desc:'Frijoles rojos cremosos con hogao, arroz blanco, aguacate y patacón.',
- ings:[{n:'Frijoles',q:400,u:'g'},{n:'Arroz',q:2,u:'tazas'},{n:'Aguacate',q:2,u:'und'},{n:'Plátano verde',q:1,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Aceite',q:2,u:'cda'},{n:'Cilantro',q:0.25,u:'atado'}],
- kidFriendly:true,kidNote:'🔥 Grasas del aguacate + hierro de los frijoles = calorías densas que Thiago necesita'},
-
-{id:'a12',name:'Arroz con atún y vegetales salteados',emoji:'🐟',time:'25 min',
- desc:'Arroz salteado con atún en lata, pimentón y arveja. Rápido y nutritivo.',
- ings:[{n:'Arroz',q:2,u:'tazas'},{n:'Atún en lata',q:2,u:'und'},{n:'Pimentón',q:1,u:'und'},{n:'Arveja',q:100,u:'g'},{n:'Cebolla',q:0.5,u:'und'},{n:'Aceite de oliva',q:2,u:'cda'},{n:'Ajo',q:2,u:'dientes'}],
- kidFriendly:true,kidNote:'🧠 Omega-3 del atún para el desarrollo cerebral de Thiago'},
-
-{id:'a13',name:'Sancocho de pollo colombiano',emoji:'🍛',time:'60 min',
- desc:'Sancocho con pollo, papa, yuca, mazorca y zanahoria. Plato bandera.',
- ings:[{n:'Pollo',q:800,u:'g'},{n:'Papa',q:3,u:'und'},{n:'Yuca',q:200,u:'g'},{n:'Mazorca',q:2,u:'und'},{n:'Zanahoria',q:2,u:'und'},{n:'Cilantro',q:1,u:'atado'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:3,u:'dientes'}],
- kidFriendly:true,kidNote:'🔥 Hipercalórico + colágeno para los huesos y articulaciones de Thiago'},
-
-{id:'a14',name:'Carne en salsa con papas y zanahoria',emoji:'🫕',time:'50 min',
- desc:'Carne de res en salsa espesa de tomate con papa y zanahoria. Con arroz.',
- ings:[{n:'Carne de res',q:500,u:'g'},{n:'Papa',q:3,u:'und'},{n:'Zanahoria',q:2,u:'und'},{n:'Tomate',q:3,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Aceite',q:2,u:'cda'},{n:'Arroz',q:2,u:'tazas'}],
- kidFriendly:true,kidNote:'⚡ Hierro + zinc de la res + vitamina A de la zanahoria para los ojos de Thiago'}
+{id:'a1',name:'Arroz con pollo',emoji:'🍗',time:'45 min',desc:'Arroz esponjoso cocinado con pollo, zanahoria, arveja y ajo. El clásico de la familia.',ings:[{n:'Arroz',q:2,u:'tazas'},{n:'Pechuga de pollo',q:600,u:'g'},{n:'Zanahoria',q:1,u:'und'},{n:'Arveja',q:100,u:'g'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Aceite',q:2,u:'cda'},{n:'Caldo de pollo',q:1,u:'taza'}],kidFriendly:true,kidNote:'💪 Zinc del pollo + proteína completa. El arroz con pollo que todos piden'},
+{id:'a2',name:'Sudado de pollo con papa y arroz',emoji:'🍲',time:'45 min',desc:'Pollo sudado en hogao de tomate y cebolla con papas tiernas. Arroz blanco.',ings:[{n:'Pollo (piezas)',q:800,u:'g'},{n:'Papa',q:4,u:'und'},{n:'Tomate',q:2,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Cilantro',q:0.5,u:'atado'},{n:'Aceite',q:2,u:'cda'},{n:'Arroz',q:2,u:'tazas'}],kidFriendly:true,kidNote:'💪 Zinc del pollo + vitamina C del hogao ayuda a absorber el hierro de Thiago'},
+{id:'a3',name:'Sudado de carne con papa y arroz',emoji:'🫕',time:'50 min',desc:'Carne de res sudada en salsa de tomate con papas. Arroz blanco y ensalada.',ings:[{n:'Carne de res',q:600,u:'g'},{n:'Papa',q:4,u:'und'},{n:'Tomate',q:2,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Cilantro',q:0.5,u:'atado'},{n:'Aceite',q:2,u:'cda'},{n:'Arroz',q:2,u:'tazas'}],kidFriendly:true,kidNote:'⚡ Hierro HEM de la res — el de mejor absorción para la energía de Thiago'},
+{id:'a4',name:'Sopa de alas con papa, fideos y mazorca',emoji:'🍜',time:'50 min',desc:'Sopa sustanciosa de alas de pollo con papa, fideos, zanahoria y mazorca.',ings:[{n:'Alas de pollo',q:800,u:'g'},{n:'Papa',q:3,u:'und'},{n:'Fideos',q:100,u:'g'},{n:'Zanahoria',q:2,u:'und'},{n:'Mazorca',q:1,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Cilantro',q:0.5,u:'atado'},{n:'Ajo',q:2,u:'dientes'}],kidFriendly:true,kidNote:'🦴 Colágeno de las alas + vitamina A de la zanahoria. Sopa que Thiago pide repetir'},
+{id:'a5',name:'Carne con brócoli y zucchini',emoji:'🥦',time:'30 min',desc:'Tiras de res salteadas con brócoli y zucchini al ajillo. Con arroz blanco.',ings:[{n:'Carne de res',q:500,u:'g'},{n:'Brócoli',q:300,u:'g'},{n:'Zucchini',q:2,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Salsa de soja',q:2,u:'cda'},{n:'Aceite de oliva',q:2,u:'cda'},{n:'Arroz',q:2,u:'tazas'}],kidFriendly:true,kidNote:'⚡ Hierro de la res + vitamina C del brócoli = hierro absorbido x3 para Thiago'},
+{id:'a6',name:'Carne asada con arroz y ensalada',emoji:'🥩',time:'30 min',desc:'Lomo de res a la plancha jugoso, con arroz blanco y ensalada de lechuga y tomate.',ings:[{n:'Lomo de res',q:600,u:'g'},{n:'Arroz',q:2,u:'tazas'},{n:'Lechuga',q:0.5,u:'und'},{n:'Tomate',q:2,u:'und'},{n:'Limón',q:1,u:'und'},{n:'Aceite de oliva',q:2,u:'cda'},{n:'Ajo',q:2,u:'dientes'}],kidFriendly:true,kidNote:'⚡ Hierro HEM del lomo: el más fácil de absorber. Clave para la energía de Thiago'},
+{id:'a7',name:'Pechuga al limón con arroz y aguacate',emoji:'🍗',time:'25 min',desc:'Pechuga marinada al limón y ajo a la plancha. Con arroz y aguacate.',ings:[{n:'Pechuga de pollo',q:600,u:'g'},{n:'Arroz',q:2,u:'tazas'},{n:'Limón',q:2,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Aceite de oliva',q:2,u:'cda'},{n:'Aguacate',q:1,u:'und'},{n:'Tomate',q:2,u:'und'}],kidFriendly:true,kidNote:'💪 Zinc + grasas del aguacate para que Thiago suba de peso sanamente'},
+{id:'a8',name:'Pescado al horno con papas y tomate',emoji:'🐟',time:'35 min',desc:'Filete de pescado al horno con papas, tomate, limón y ajo. Delicioso y sano.',ings:[{n:'Filete de pescado',q:600,u:'g'},{n:'Papa',q:3,u:'und'},{n:'Tomate',q:2,u:'und'},{n:'Limón',q:2,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Aceite de oliva',q:2,u:'cda'},{n:'Cilantro',q:0.25,u:'atado'}],kidFriendly:true,kidNote:'🧠 Omega-3 para el cerebro y concentración de Thiago'},
+{id:'a9',name:'Pasta boloñesa con carne molida',emoji:'🍝',time:'30 min',desc:'Pasta con salsa boloñesa de carne molida, tomate, cebolla y pimentón.',ings:[{n:'Pasta',q:400,u:'g'},{n:'Carne molida',q:400,u:'g'},{n:'Tomate',q:4,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Pimentón',q:1,u:'und'},{n:'Aceite',q:2,u:'cda'}],kidFriendly:true,kidNote:'⚡ Hierro de la carne + vitamina C del tomate. La pasta que Thiago siempre termina'},
+{id:'a10',name:'Lentejas con arroz y tajadas',emoji:'🍲',time:'45 min',desc:'Lentejas guisadas con zanahoria y cebolla. Con arroz blanco y tajadas de maduro.',ings:[{n:'Lentejas',q:300,u:'g'},{n:'Arroz',q:2,u:'tazas'},{n:'Plátano maduro',q:2,u:'und'},{n:'Zanahoria',q:1,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:2,u:'dientes'},{n:'Aceite',q:2,u:'cda'},{n:'Cilantro',q:0.25,u:'atado'}],kidFriendly:true,kidNote:'⚡ Hierro de las lentejas + potasio del maduro. Jugo de naranja triplica la absorción'},
+{id:'a11',name:'Frijoles rojos con arroz y aguacate',emoji:'🫘',time:'60 min',desc:'Frijoles rojos cremosos en hogao con arroz blanco, aguacate y patacón.',ings:[{n:'Frijoles',q:400,u:'g'},{n:'Arroz',q:2,u:'tazas'},{n:'Aguacate',q:2,u:'und'},{n:'Plátano verde',q:1,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Aceite',q:2,u:'cda'},{n:'Cilantro',q:0.25,u:'atado'}],kidFriendly:true,kidNote:'🔥 Grasas del aguacate + hierro de los frijoles = calorías densas que Thiago necesita'},
+{id:'a12',name:'Arroz con atún y vegetales',emoji:'🐟',time:'25 min',desc:'Arroz salteado con atún en lata, pimentón y arveja. Rápido y muy nutritivo.',ings:[{n:'Arroz',q:2,u:'tazas'},{n:'Atún en lata',q:2,u:'und'},{n:'Pimentón',q:1,u:'und'},{n:'Arveja',q:100,u:'g'},{n:'Cebolla',q:0.5,u:'und'},{n:'Aceite de oliva',q:2,u:'cda'},{n:'Ajo',q:2,u:'dientes'}],kidFriendly:true,kidNote:'🧠 Omega-3 del atún para el cerebro de Thiago'},
+{id:'a13',name:'Sancocho de pollo colombiano',emoji:'🍛',time:'60 min',desc:'Sancocho con pollo, papa, yuca, mazorca y zanahoria. El plato bandera.',ings:[{n:'Pollo',q:800,u:'g'},{n:'Papa',q:3,u:'und'},{n:'Yuca',q:200,u:'g'},{n:'Mazorca',q:2,u:'und'},{n:'Zanahoria',q:2,u:'und'},{n:'Cilantro',q:1,u:'atado'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:3,u:'dientes'}],kidFriendly:true,kidNote:'🔥 Hipercalórico + colágeno para los huesos de Thiago'},
+{id:'a14',name:'Carne en salsa criolla con papa',emoji:'🫕',time:'50 min',desc:'Carne de res en salsa criolla de tomate con papas y zanahoria. Con arroz.',ings:[{n:'Carne de res',q:500,u:'g'},{n:'Papa',q:3,u:'und'},{n:'Zanahoria',q:2,u:'und'},{n:'Tomate',q:3,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Aceite',q:2,u:'cda'},{n:'Arroz',q:2,u:'tazas'}],kidFriendly:true,kidNote:'⚡ Hierro + zinc + vitamina A de la zanahoria para los ojos de Thiago'},
+{id:'a15',name:'Bistec encebollado con arroz y papa',emoji:'🥩',time:'30 min',desc:'Bistec de res jugoso con cebolla caramelizada. Con arroz y papa al vapor.',ings:[{n:'Bistec de res',q:500,u:'g'},{n:'Cebolla',q:2,u:'und'},{n:'Arroz',q:2,u:'tazas'},{n:'Papa',q:3,u:'und'},{n:'Aceite',q:2,u:'cda'},{n:'Ajo',q:2,u:'dientes'},{n:'Tomate',q:1,u:'und'}],kidFriendly:true,kidNote:'⚡ Hierro HEM del bistec. Sabroso y reconfortante para toda la familia'},
+{id:'a16',name:'Pollo al horno con papas y brócoli',emoji:'🍗',time:'55 min',desc:'Pollo entero dorado al horno con papas, brócoli y ajo. Jugoso y crujiente.',ings:[{n:'Pollo (piezas)',q:800,u:'g'},{n:'Papa',q:500,u:'g'},{n:'Brócoli',q:300,u:'g'},{n:'Ajo',q:4,u:'dientes'},{n:'Aceite de oliva',q:3,u:'cda'},{n:'Limón',q:1,u:'und'}],kidFriendly:true,kidNote:'💪 Zinc del pollo + vitamina C del brócoli. Doradito que Thiago ama'},
+{id:'a17',name:'Sopa de verduras con pollo desmenuzado',emoji:'🥣',time:'40 min',desc:'Sopa nutritiva de papa, zanahoria, arveja y mazorca con pollo desmenuzado.',ings:[{n:'Pechuga de pollo',q:400,u:'g'},{n:'Papa',q:3,u:'und'},{n:'Zanahoria',q:2,u:'und'},{n:'Arveja',q:150,u:'g'},{n:'Mazorca',q:1,u:'und'},{n:'Cilantro',q:1,u:'atado'},{n:'Cebolla',q:1,u:'und'}],kidFriendly:true,kidNote:'🌟 Vitaminas + zinc del pollo. Ideal para los días sin apetito de Thiago'},
+{id:'a18',name:'Albóndigas en salsa de tomate con arroz',emoji:'🍅',time:'40 min',desc:'Albóndigas jugosas de carne molida en salsa de tomate casera. Con arroz.',ings:[{n:'Carne molida',q:500,u:'g'},{n:'Tomate',q:4,u:'und'},{n:'Arroz',q:2,u:'tazas'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Pan rallado',q:3,u:'cda'},{n:'Huevos',q:1,u:'und'}],kidFriendly:true,kidNote:'⚡ Hierro de la carne + vitamina C del tomate. Thiago las pide siempre'},
+{id:'a19',name:'Pollo sudado en leche de coco con arroz',emoji:'🥥',time:'45 min',desc:'Pollo sudado con leche de coco, papa y ajo. Cremoso y aromático con arroz.',ings:[{n:'Pollo (piezas)',q:700,u:'g'},{n:'Leche de coco',q:1,u:'taza'},{n:'Papa',q:3,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Arroz',q:2,u:'tazas'}],kidFriendly:true,kidNote:'🔥 Leche de coco aporta calorías saludables para que Thiago gane peso'},
+{id:'a20',name:'Pasta con pollo en salsa blanca',emoji:'🍝',time:'35 min',desc:'Pasta en salsa blanca cremosa de ajo con pollo a la plancha encima.',ings:[{n:'Pasta',q:400,u:'g'},{n:'Pechuga de pollo',q:400,u:'g'},{n:'Leche',q:1,u:'taza'},{n:'Mantequilla',q:2,u:'cda'},{n:'Ajo',q:4,u:'dientes'},{n:'Queso blanco',q:100,u:'g'}],kidFriendly:true,kidNote:'🦴 Calcio de la salsa blanca + zinc del pollo. Pasta diferente que encanta'},
+{id:'a21',name:'Arroz con costilla en salsa de tomate',emoji:'🍖',time:'55 min',desc:'Costilla de res blanda en salsa de tomate servida sobre arroz blanco.',ings:[{n:'Costilla de res',q:500,u:'g'},{n:'Arroz',q:2,u:'tazas'},{n:'Tomate',q:3,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Zanahoria',q:1,u:'und'},{n:'Aceite',q:2,u:'cda'}],kidFriendly:true,kidNote:'⚡ Hierro HEM + colágeno de la costilla para los huesos de Thiago'},
+{id:'a22',name:'Estofado de pollo con arveja y zanahoria',emoji:'🍲',time:'50 min',desc:'Estofado suave de pollo con papa, arveja, zanahoria en salsa de tomate.',ings:[{n:'Pollo (piezas)',q:700,u:'g'},{n:'Papa',q:3,u:'und'},{n:'Zanahoria',q:2,u:'und'},{n:'Arveja',q:100,u:'g'},{n:'Tomate',q:2,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Aceite',q:2,u:'cda'}],kidFriendly:true,kidNote:'🌟 Zinc + vitaminas completas. Estofado que Thiago come con ganas'},
+{id:'a23',name:'Pechuga en hogao con arroz',emoji:'🍗',time:'35 min',desc:'Pechuga jugosa cubierta en hogao de tomate y cebolla. Con arroz blanco.',ings:[{n:'Pechuga de pollo',q:600,u:'g'},{n:'Tomate',q:3,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Cilantro',q:0.5,u:'atado'},{n:'Aceite',q:2,u:'cda'},{n:'Arroz',q:2,u:'tazas'}],kidFriendly:true,kidNote:'💪 Zinc del pollo + vitamina C del hogao. Deliciosa y diferente'}
 ],
 
 cena:[
-{id:'c1',name:'Caldo de costilla con papa y cilantro',emoji:'🍵',time:'50 min',
- desc:'Caldo reconfortante de costilla de res con papa pastusa y cilantro fresco.',
- ings:[{n:'Costilla de res',q:400,u:'g'},{n:'Papa',q:2,u:'und'},{n:'Cebolla larga',q:2,u:'und'},{n:'Cilantro',q:0.5,u:'atado'},{n:'Ajo',q:2,u:'dientes'}],
- kidFriendly:true,kidNote:'⚡ Hierro HEM + colágeno para la energía y crecimiento de Thiago en la noche'},
-
-{id:'c2',name:'Sopa de alas con fideos',emoji:'🍜',time:'40 min',
- desc:'Sopa ligera de alas de pollo con fideos, zanahoria y papa.',
- ings:[{n:'Alas de pollo',q:500,u:'g'},{n:'Fideos',q:150,u:'g'},{n:'Papa',q:2,u:'und'},{n:'Zanahoria',q:1,u:'und'},{n:'Cilantro',q:0.25,u:'atado'},{n:'Cebolla',q:0.5,u:'und'},{n:'Ajo',q:2,u:'dientes'}],
- kidFriendly:true,kidNote:'🦴 Colágeno + zinc del pollo. Suave y fácil de comer para Thiago en la noche'},
-
-{id:'c3',name:'Pasta gratinada con queso y espinaca',emoji:'🧀',time:'35 min',
- desc:'Pasta al horno con queso blanco derretido y espinaca fresca.',
- ings:[{n:'Pasta',q:300,u:'g'},{n:'Queso blanco',q:200,u:'g'},{n:'Espinaca',q:150,u:'g'},{n:'Leche',q:1,u:'taza'},{n:'Mantequilla',q:1,u:'cda'},{n:'Ajo',q:2,u:'dientes'}],
- kidFriendly:true,kidNote:'🦴 Calcio del queso + hierro de la espinaca. El queso derretido que Thiago ama'},
-
-{id:'c4',name:'Huevos revueltos con papa y arepa',emoji:'🥚',time:'20 min',
- desc:'Papa en cuadritos salteada con huevos revueltos y arepa dorada.',
- ings:[{n:'Huevos',q:4,u:'und'},{n:'Papa',q:2,u:'und'},{n:'Cebolla',q:0.5,u:'und'},{n:'Aceite',q:2,u:'cda'},{n:'Arepa',q:3,u:'und'}],
- kidFriendly:true,kidNote:'⚡ Zinc del huevo + energía de la papa. Rápido y Thiago lo pide siempre'},
-
-{id:'c5',name:'Omelette de queso con ensalada',emoji:'🍳',time:'15 min',
- desc:'Omelette esponjoso de queso blanco con ensalada verde de lechuga y tomate.',
- ings:[{n:'Huevos',q:4,u:'und'},{n:'Queso blanco',q:100,u:'g'},{n:'Lechuga',q:0.25,u:'und'},{n:'Tomate',q:1,u:'und'},{n:'Aceite',q:1,u:'cda'}],
- kidFriendly:true,kidNote:'⚡ Zinc + calcio + proteína. Rápido y nutritivo para las noches ocupadas'},
-
-{id:'c6',name:'Crema de zanahoria con pan',emoji:'🥕',time:'30 min',
- desc:'Crema suave de zanahoria y papa con pan integral tostado.',
- ings:[{n:'Zanahoria',q:5,u:'und'},{n:'Papa',q:2,u:'und'},{n:'Cebolla',q:0.5,u:'und'},{n:'Ajo',q:2,u:'dientes'},{n:'Caldo de pollo',q:2,u:'tazas'},{n:'Pan integral',q:3,u:'tajadas'}],
- kidFriendly:true,kidNote:'🌟 Vitamina A de la zanahoria para los ojos y defensas de Thiago. Dulce natural'},
-
-{id:'c7',name:'Arroz con atún salteado',emoji:'🐟',time:'20 min',
- desc:'Arroz blanco con atún en lata salteado con pimentón y cebolla.',
- ings:[{n:'Arroz',q:2,u:'tazas'},{n:'Atún en lata',q:2,u:'und'},{n:'Pimentón',q:1,u:'und'},{n:'Cebolla',q:0.5,u:'und'},{n:'Aceite',q:1,u:'cda'},{n:'Ajo',q:2,u:'dientes'}],
- kidFriendly:true,kidNote:'🧠 Omega-3 del atún para el cerebro de Thiago. Cena rápida y nutritiva'},
-
-{id:'c8',name:'Revuelto de papa, huevo y cebolla',emoji:'🥔',time:'20 min',
- desc:'Papa cocida en cubos revuelta con huevo y cebolla. Con pan o arepa.',
- ings:[{n:'Papa',q:3,u:'und'},{n:'Huevos',q:4,u:'und'},{n:'Cebolla',q:0.5,u:'und'},{n:'Aceite',q:2,u:'cda'},{n:'Pan integral',q:3,u:'tajadas'}],
- kidFriendly:true,kidNote:'⚡ Zinc del huevo + carbohidratos de la papa para energía en la noche'}
+{id:'c1',name:'Caldo de costilla con papa',emoji:'🍵',time:'50 min',desc:'Caldo reconfortante de costilla con papa, cebolla larga y cilantro fresco.',ings:[{n:'Costilla de res',q:400,u:'g'},{n:'Papa',q:2,u:'und'},{n:'Cebolla larga',q:2,u:'und'},{n:'Cilantro',q:0.5,u:'atado'},{n:'Ajo',q:2,u:'dientes'}],kidFriendly:true,kidNote:'⚡ Hierro HEM + colágeno para energía y crecimiento de Thiago en la noche'},
+{id:'c2',name:'Sopa de alas con fideos',emoji:'🍜',time:'40 min',desc:'Sopa de alas de pollo con fideos, zanahoria y papa. Suave y nutritiva.',ings:[{n:'Alas de pollo',q:500,u:'g'},{n:'Fideos',q:150,u:'g'},{n:'Papa',q:2,u:'und'},{n:'Zanahoria',q:1,u:'und'},{n:'Cilantro',q:0.25,u:'atado'},{n:'Cebolla',q:0.5,u:'und'},{n:'Ajo',q:2,u:'dientes'}],kidFriendly:true,kidNote:'🦴 Colágeno + zinc del pollo. Suave y fácil de comer para Thiago en la noche'},
+{id:'c3',name:'Pasta gratinada con queso y espinaca',emoji:'🧀',time:'35 min',desc:'Pasta al horno con queso blanco derretido y espinaca fresca. Cremosa.',ings:[{n:'Pasta',q:300,u:'g'},{n:'Queso blanco',q:200,u:'g'},{n:'Espinaca',q:150,u:'g'},{n:'Leche',q:1,u:'taza'},{n:'Mantequilla',q:1,u:'cda'},{n:'Ajo',q:2,u:'dientes'}],kidFriendly:true,kidNote:'🦴 Calcio del queso + hierro de la espinaca. El queso derretido que Thiago ama'},
+{id:'c4',name:'Huevos revueltos con papa y arepa',emoji:'🥚',time:'20 min',desc:'Papa en cuadros salteada con huevos revueltos esponjosos y arepa dorada.',ings:[{n:'Huevos',q:4,u:'und'},{n:'Papa',q:2,u:'und'},{n:'Cebolla',q:0.5,u:'und'},{n:'Aceite',q:2,u:'cda'},{n:'Arepa',q:3,u:'und'}],kidFriendly:true,kidNote:'⚡ Zinc del huevo + energía de la papa. Rápido y Thiago siempre lo pide'},
+{id:'c5',name:'Omelette de queso con ensalada',emoji:'🍳',time:'15 min',desc:'Omelette esponjoso de queso blanco con ensalada verde de lechuga y tomate.',ings:[{n:'Huevos',q:4,u:'und'},{n:'Queso blanco',q:100,u:'g'},{n:'Lechuga',q:0.25,u:'und'},{n:'Tomate',q:1,u:'und'},{n:'Aceite',q:1,u:'cda'}],kidFriendly:true,kidNote:'⚡ Zinc + calcio + proteína. Rápido y nutritivo para las noches'},
+{id:'c6',name:'Crema de zanahoria con pan',emoji:'🥕',time:'30 min',desc:'Crema suave de zanahoria y papa con pan integral tostado.',ings:[{n:'Zanahoria',q:5,u:'und'},{n:'Papa',q:2,u:'und'},{n:'Cebolla',q:0.5,u:'und'},{n:'Ajo',q:2,u:'dientes'},{n:'Caldo de pollo',q:2,u:'tazas'},{n:'Pan integral',q:3,u:'tajadas'}],kidFriendly:true,kidNote:'🌟 Vitamina A de la zanahoria para los ojos y defensas de Thiago'},
+{id:'c7',name:'Arroz con atún salteado',emoji:'🐟',time:'20 min',desc:'Arroz blanco con atún en lata salteado con pimentón, cebolla y ajo.',ings:[{n:'Arroz',q:2,u:'tazas'},{n:'Atún en lata',q:2,u:'und'},{n:'Pimentón',q:1,u:'und'},{n:'Cebolla',q:0.5,u:'und'},{n:'Aceite',q:1,u:'cda'},{n:'Ajo',q:2,u:'dientes'}],kidFriendly:true,kidNote:'🧠 Omega-3 del atún para el cerebro de Thiago. Cena rápida y nutritiva'},
+{id:'c8',name:'Revuelto de papa y huevo con arepa',emoji:'🥔',time:'20 min',desc:'Papa cocida en cubos revuelta con huevo y cebolla. Con arepa.',ings:[{n:'Papa',q:3,u:'und'},{n:'Huevos',q:4,u:'und'},{n:'Cebolla',q:0.5,u:'und'},{n:'Aceite',q:2,u:'cda'},{n:'Arepa',q:3,u:'und'}],kidFriendly:true,kidNote:'⚡ Zinc del huevo + carbohidratos de la papa para energía nocturna'},
+{id:'c9',name:'Sopa de fideos con pollo desmenuzado',emoji:'🍜',time:'25 min',desc:'Fideos en caldo de pollo con zanahoria y papa. Suave y reconfortante.',ings:[{n:'Fideos',q:200,u:'g'},{n:'Pechuga de pollo',q:300,u:'g'},{n:'Zanahoria',q:1,u:'und'},{n:'Papa',q:2,u:'und'},{n:'Cilantro',q:0.5,u:'atado'},{n:'Cebolla',q:0.5,u:'und'}],kidFriendly:true,kidNote:'💪 Proteína + zinc del pollo. Suave para Thiago en la noche'},
+{id:'c10',name:'Caldo de pollo con arroz',emoji:'🍵',time:'35 min',desc:'Caldo de pollo con arroz, papa y cilantro. Reconfortante y nutritivo.',ings:[{n:'Pollo (piezas)',q:400,u:'g'},{n:'Arroz',q:1,u:'taza'},{n:'Papa',q:2,u:'und'},{n:'Cilantro',q:0.5,u:'atado'},{n:'Cebolla larga',q:2,u:'und'},{n:'Ajo',q:2,u:'dientes'}],kidFriendly:true,kidNote:'🦴 Zinc + colágeno del pollo para los huesos de Thiago'},
+{id:'c11',name:'Crema de ahuyama con pan',emoji:'🎃',time:'30 min',desc:'Crema suave y dulce de ahuyama con un toque de leche y pan tostado.',ings:[{n:'Ahuyama',q:500,u:'g'},{n:'Papa',q:1,u:'und'},{n:'Cebolla',q:0.5,u:'und'},{n:'Ajo',q:2,u:'dientes'},{n:'Caldo de pollo',q:2,u:'tazas'},{n:'Pan integral',q:3,u:'tajadas'}],kidFriendly:true,kidNote:'🌟 Vitamina A + betacaroteno para las defensas de Thiago'},
+{id:'c12',name:'Arroz blanco con huevo frito',emoji:'🍳',time:'15 min',desc:'Arroz blanco con huevo frito encima y ensalada de tomate y lechuga.',ings:[{n:'Arroz',q:2,u:'tazas'},{n:'Huevos',q:3,u:'und'},{n:'Lechuga',q:0.25,u:'und'},{n:'Tomate',q:1,u:'und'},{n:'Aceite',q:1,u:'cda'}],kidFriendly:true,kidNote:'⚡ Zinc del huevo. Simple, rico y Thiago lo come con gusto'}
 ]};
 
-// ── MENÚ PLANIFICADO JUNIO 8–30 ──────────────────────────────────────────────
+// ── MENÚ PLANIFICADO JUNIO 8–30 (almuerzos únicos cada día) ──────────────────
 const PLANNED={
   '2026-06-08':{desayuno:'d1',almuerzo:'a1',cena:'c1'},
   '2026-06-09':{desayuno:'d2',almuerzo:'a2',cena:'c2'},
@@ -513,21 +405,21 @@ const PLANNED={
   '2026-06-13':{desayuno:'d6',almuerzo:'a6',cena:'c6'},
   '2026-06-14':{desayuno:'d7',almuerzo:'a7',cena:'c7'},
   '2026-06-15':{desayuno:'d8',almuerzo:'a8',cena:'c8'},
-  '2026-06-16':{desayuno:'d9',almuerzo:'a9',cena:'c1'},
-  '2026-06-17':{desayuno:'d10',almuerzo:'a10',cena:'c2'},
-  '2026-06-18':{desayuno:'d1',almuerzo:'a11',cena:'c3'},
-  '2026-06-19':{desayuno:'d2',almuerzo:'a12',cena:'c4'},
-  '2026-06-20':{desayuno:'d3',almuerzo:'a13',cena:'c5'},
-  '2026-06-21':{desayuno:'d4',almuerzo:'a14',cena:'c6'},
-  '2026-06-22':{desayuno:'d5',almuerzo:'a1',cena:'c7'},
-  '2026-06-23':{desayuno:'d6',almuerzo:'a2',cena:'c8'},
-  '2026-06-24':{desayuno:'d7',almuerzo:'a3',cena:'c1'},
-  '2026-06-25':{desayuno:'d8',almuerzo:'a4',cena:'c2'},
-  '2026-06-26':{desayuno:'d9',almuerzo:'a5',cena:'c3'},
-  '2026-06-27':{desayuno:'d10',almuerzo:'a6',cena:'c4'},
-  '2026-06-28':{desayuno:'d1',almuerzo:'a7',cena:'c5'},
-  '2026-06-29':{desayuno:'d2',almuerzo:'a8',cena:'c6'},
-  '2026-06-30':{desayuno:'d3',almuerzo:'a9',cena:'c7'}
+  '2026-06-16':{desayuno:'d9',almuerzo:'a9',cena:'c9'},
+  '2026-06-17':{desayuno:'d10',almuerzo:'a10',cena:'c10'},
+  '2026-06-18':{desayuno:'d11',almuerzo:'a11',cena:'c11'},
+  '2026-06-19':{desayuno:'d12',almuerzo:'a12',cena:'c12'},
+  '2026-06-20':{desayuno:'d13',almuerzo:'a13',cena:'c1'},
+  '2026-06-21':{desayuno:'d14',almuerzo:'a14',cena:'c2'},
+  '2026-06-22':{desayuno:'d1',almuerzo:'a15',cena:'c3'},
+  '2026-06-23':{desayuno:'d2',almuerzo:'a16',cena:'c4'},
+  '2026-06-24':{desayuno:'d3',almuerzo:'a17',cena:'c5'},
+  '2026-06-25':{desayuno:'d4',almuerzo:'a18',cena:'c6'},
+  '2026-06-26':{desayuno:'d5',almuerzo:'a19',cena:'c7'},
+  '2026-06-27':{desayuno:'d6',almuerzo:'a20',cena:'c8'},
+  '2026-06-28':{desayuno:'d7',almuerzo:'a21',cena:'c9'},
+  '2026-06-29':{desayuno:'d8',almuerzo:'a22',cena:'c10'},
+  '2026-06-30':{desayuno:'d9',almuerzo:'a23',cena:'c11'}
 };
 
 // ── ESTADO ───────────────────────────────────────────────────────────────────
