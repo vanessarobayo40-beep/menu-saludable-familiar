@@ -112,7 +112,7 @@ select.fi{cursor:pointer}
 .cd-dot{width:5px;height:5px;border-radius:50%;background:#e5e7eb}.cd-dot.done{background:var(--g2)}.cd-dot.partial{background:var(--o)}
 .pfilter{display:flex;gap:6px;overflow-x:auto;margin-bottom:12px;scrollbar-width:none;padding-bottom:2px}
 .pfilter::-webkit-scrollbar{display:none}
-.fpill{flex-shrink:0;padding:5px 12px;border-radius:16px;border:1.5px solid var(--border);background:#fff;font-size:.72rem;font-weight:700;cursor:pointer;color:var(--text2);transition:all .15s}
+.fpill{flex-shrink:0;padding:5px 12px;border-radius:16px;border:1.5px solid var(--border);background:#fff;font-size:.72rem;font-weight:700;cursor:pointer;color:var(--text2);transition:all .15px}
 .fpill.active{background:var(--g2);border-color:var(--g2);color:#fff}
 .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .pitem{background:#fff;border-radius:12px;padding:12px;box-shadow:var(--sh);border:1px solid var(--border);position:relative}
@@ -168,6 +168,9 @@ select.fi{cursor:pointer}
 .empty h3{font-size:.92rem;font-weight:800;color:var(--text);margin-bottom:7px}
 .empty p{font-size:.82rem;line-height:1.7}
 .sec-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px}
+.plan-banner{background:linear-gradient(135deg,#0f4d2b,var(--g));border-radius:12px;padding:13px 16px;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.plan-banner-txt{font-size:.78rem;color:#fff;font-weight:600;line-height:1.5}
+.plan-banner-ico{font-size:1.6rem;flex-shrink:0}
 @media print{.hdr,.bnav,#sc-menu,#sc-despensa,#sc-facturas,#sc-familia{display:none!important}#sc-lista{display:block!important;padding:0!important}.sdel,.schk,.btn,.ltog{display:none!important}body{background:#fff}}
 </style>
 </head>
@@ -178,7 +181,7 @@ select.fi{cursor:pointer}
     <span class="hdr-ico">🥗</span>
     <div><div class="hdr-tit">Menú Familiar</div><div class="hdr-sub">Thiago 👦 · Esposo 👨 · Tú 👩</div></div>
   </div>
-  <button class="wk-badge" id="hdrBadge" onclick="goScreen('menu')">Cargando…</button>
+  <button class="wk-badge" id="hdrBadge" onclick="goScreen('menu')">Jun 2026</button>
 </header>
 
 <!-- MENÚ -->
@@ -189,7 +192,6 @@ select.fi{cursor:pointer}
     <button class="vt" id="vt-month" onclick="setView('month')">📆 Mes</button>
   </div>
   <div class="sec-row">
-    <button class="btn btn-ghost btn-sm" onclick="regenerateMenu()">🔀 Nuevo menú</button>
     <button class="btn btn-ghost btn-sm" onclick="openWeekIng()">📋 Ingredientes</button>
     <button class="btn btn-ghost btn-sm" onclick="openCustomRecipe()">✨ Mi receta</button>
   </div>
@@ -239,16 +241,19 @@ select.fi{cursor:pointer}
     <button class="btn btn-g" onclick="addListForm()">Agregar</button>
   </div>
   <div class="ltog">
-    <button class="lt active" onclick="setListMode('week')">📅 Esta semana</button>
-    <button class="lt" onclick="setListMode('month')">📆 Este mes</button>
+    <button class="lt active" id="lt-week" onclick="setListMode('week')">📅 Lista actual</button>
+    <button class="lt" id="lt-month" onclick="setListMode('month')">📆 Todo junio</button>
   </div>
   <div style="display:flex;gap:8px;margin-bottom:12px">
-    <button class="btn btn-g btn-sm" style="flex:1;justify-content:center" onclick="downloadTxt()">⬇️ Descargar TXT</button>
-    <button class="btn btn-b btn-sm" style="flex:1;justify-content:center" onclick="window.print()">🖨️ Imprimir</button>
+    <button class="btn btn-g btn-sm" style="flex:1;justify-content:center" onclick="generateMonthList()">🛒 Generar lista Jun 8–30</button>
+    <button class="btn btn-ghost btn-sm" onclick="downloadTxt()">⬇️ TXT</button>
     <button class="btn btn-ghost btn-sm" onclick="clearChecked()">🗑️</button>
   </div>
+  <div style="background:var(--gbg);border:1px solid rgba(39,174,96,.2);border-radius:10px;padding:10px 13px;margin-bottom:12px;font-size:.75rem;color:var(--g);font-weight:600;line-height:1.6">
+    ✅ Al dar <strong>chulito</strong> a un producto, pasa automáticamente a tu despensa.
+  </div>
   <div class="card">
-    <div class="card-hdr"><div class="card-tit" id="listTitle">🛒 Lista semanal</div></div>
+    <div class="card-hdr"><div class="card-tit" id="listTitle">🛒 Lista de mercado</div></div>
     <div id="shopList"></div>
   </div>
 </div>
@@ -257,11 +262,11 @@ select.fi{cursor:pointer}
 <div class="screen" id="sc-familia">
   <div class="thiago-box">
     <div class="thiago-tit">⚠️ Notas del pediatra — Thiago</div>
-    <div class="thiago-tip">⚡ <span><strong>Hierro:</strong> Carne roja, lentejas, espinaca y frijoles dan energía y forman hemoglobina.</span></div>
+    <div class="thiago-tip">⚡ <span><strong>Hierro:</strong> Carne roja, lentejas, frijoles dan energía y forman hemoglobina.</span></div>
     <div class="thiago-tip">🦷 <span><strong>Zinc:</strong> Huevos, carne y queso estimulan el apetito y el crecimiento.</span></div>
     <div class="thiago-tip">🔥 <span><strong>Calorías densas:</strong> Aguacate, maní, aceite de oliva y queso para ganar peso.</span></div>
     <div class="thiago-tip">🦴 <span><strong>Calcio:</strong> Leche entera, queso y yogur para sus huesos.</span></div>
-    <div class="thiago-tip">💡 <span>Vitamina C con alimentos de hierro <strong>triplica</strong> la absorción.</span></div>
+    <div class="thiago-tip">💡 <span>Vitamina C con alimentos de hierro <strong>triplica</strong> la absorción — dale jugo de naranja.</span></div>
   </div>
   <div id="famCards"></div>
 </div>
@@ -320,7 +325,7 @@ select.fi{cursor:pointer}
     <div class="fg"><label class="flbl">Nombre</label><input class="fi" id="crName" placeholder="Nombre de la receta"></div>
     <div class="fr2"><div class="fg"><label class="flbl">Tiempo</label><input class="fi" id="crTime" placeholder="30 min"></div><div class="fg"><label class="flbl">¿Apta para Thiago?</label><select class="fi" id="crKid"><option value="1">Sí ✅</option><option value="0">No</option></select></div></div>
     <div class="fg"><label class="flbl">Descripción</label><input class="fi" id="crDesc" placeholder="Breve descripción…"></div>
-    <div class="fg"><label class="flbl">Nota nutricional para Thiago (opcional)</label><input class="fi" id="crKidNote" placeholder="Ej: Rica en hierro para su energía"></div>
+    <div class="fg"><label class="flbl">Nota para Thiago (opcional)</label><input class="fi" id="crKidNote" placeholder="Ej: Rica en hierro para su energía"></div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><div style="font-size:.72rem;font-weight:800;text-transform:uppercase;color:var(--text2)">Ingredientes</div><button class="btn btn-ghost btn-xs" onclick="addCrRow()">+ Ingrediente</button></div>
     <div id="crIngRows"></div>
   </div>
@@ -330,59 +335,218 @@ select.fi{cursor:pointer}
 <div class="toast" id="toastEl"></div>
 
 <script>
+// ── RECETAS (basadas en comidas favoritas de la familia) ─────────────────────
 const RCP={
 desayuno:[
-{id:'d1',name:'Avena con frutas y miel',emoji:'🥣',time:'10 min',desc:'Avena cremosa con leche, banano y fresas.',ings:[{n:'Avena',q:2,u:'tazas'},{n:'Leche',q:2,u:'tazas'},{n:'Banano',q:2,u:'und'},{n:'Fresas',q:150,u:'g'},{n:'Miel',q:2,u:'cda'}],kidFriendly:true,kidNote:'🦴 Calcio de la leche + zinc de la avena para que Thiago crezca fuerte'},
-{id:'d2',name:'Huevos revueltos con tostadas',emoji:'🍳',time:'12 min',desc:'Huevos esponjosos con tostadas integrales y jugo de naranja.',ings:[{n:'Huevos',q:4,u:'und'},{n:'Pan integral',q:6,u:'tajadas'},{n:'Mantequilla',q:1,u:'cda'},{n:'Naranja',q:3,u:'und'}],kidFriendly:true,kidNote:'⚡ Hierro y zinc de los huevos + vitamina C del jugo = energía máxima para Thiago'},
-{id:'d3',name:'Arepa con queso y aguacate',emoji:'🫓',time:'15 min',desc:'Arepas doraditas con queso blanco y aguacate cremoso.',ings:[{n:'Arepa',q:3,u:'und'},{n:'Queso blanco',q:150,u:'g'},{n:'Aguacate',q:1,u:'und'},{n:'Mantequilla',q:1,u:'cda'}],kidFriendly:true,kidNote:'🔥 Grasas saludables del aguacate + calcio del queso para los huesos de Thiago'},
-{id:'d4',name:'Yogur con granola y frutas',emoji:'🍓',time:'5 min',desc:'Yogur cremoso con granola crujiente y frutas frescas.',ings:[{n:'Yogur natural',q:3,u:'und'},{n:'Granola',q:1,u:'taza'},{n:'Fresas',q:200,u:'g'},{n:'Mango',q:1,u:'und'},{n:'Miel',q:1,u:'cda'}],kidFriendly:true,kidNote:'🌟 Probióticos + calcio para el sistema digestivo e inmune de Thiago'},
-{id:'d5',name:'Pancakes de avena con banano',emoji:'🥞',time:'20 min',desc:'Pancakes esponjosos sin harina. Los niños los adoran.',ings:[{n:'Avena',q:2,u:'tazas'},{n:'Banano',q:3,u:'und'},{n:'Huevos',q:2,u:'und'},{n:'Leche',q:0.5,u:'taza'},{n:'Miel',q:2,u:'cda'},{n:'Aceite',q:1,u:'cda'}],kidFriendly:true,kidNote:'⚡ Energía sostenida + potasio del banano para los músculos de Thiago'},
-{id:'d6',name:'Tostadas con maní y banano',emoji:'🍞',time:'5 min',desc:'Tostadas con mantequilla de maní y banano dulce.',ings:[{n:'Pan integral',q:6,u:'tajadas'},{n:'Mantequilla de maní',q:3,u:'cda'},{n:'Banano',q:2,u:'und'},{n:'Miel',q:1,u:'cda'}],kidFriendly:true,kidNote:'🔥 HIPERCALÓRICO: proteína + grasas para que Thiago suba de peso sanamente'},
-{id:'d7',name:'Revuelto de huevos con espinaca',emoji:'🥚',time:'15 min',desc:'Huevos con espinaca fresca, tomate y queso.',ings:[{n:'Huevos',q:4,u:'und'},{n:'Espinaca',q:100,u:'g'},{n:'Tomate',q:1,u:'und'},{n:'Queso blanco',q:50,u:'g'},{n:'Aceite',q:1,u:'cda'},{n:'Pan integral',q:3,u:'tajadas'}],kidFriendly:true,kidNote:'⚡ Hierro de la espinaca + zinc del huevo = energía para todo el día'},
-{id:'d8',name:'Changua con huevo',emoji:'🥛',time:'15 min',desc:'Sopa de leche con huevo escalfado y pan. Tradición colombiana.',ings:[{n:'Leche',q:3,u:'tazas'},{n:'Huevos',q:3,u:'und'},{n:'Pan',q:3,u:'tajadas'},{n:'Cebolla larga',q:2,u:'und'},{n:'Cilantro',q:0.5,u:'atado'}],kidFriendly:true,kidNote:'🦴 Calcio + proteína completa en un plato. Perfecto para el crecimiento de Thiago'},
-{id:'d9',name:'Colada de maicena con leche',emoji:'🥤',time:'10 min',desc:'Colada espesa con leche entera, canela y fruta picada.',ings:[{n:'Maicena',q:3,u:'cda'},{n:'Leche',q:3,u:'tazas'},{n:'Azúcar',q:2,u:'cda'},{n:'Banano',q:1,u:'und'},{n:'Canela',q:1,u:'pizca'}],kidFriendly:true,kidNote:'💧 Calorías fáciles de absorber + calcio. Ideal para Thiago cuando no tiene apetito'},
-{id:'d10',name:'Tostada de queso con jugo natural',emoji:'🧇',time:'10 min',desc:'Queso fundido en pan tostado crujiente con jugo natural.',ings:[{n:'Pan integral',q:6,u:'tajadas'},{n:'Queso blanco',q:200,u:'g'},{n:'Mantequilla',q:1,u:'cda'},{n:'Naranja',q:4,u:'und'}],kidFriendly:true,kidNote:'🦴 Calcio del queso + vitamina C del jugo ayuda a absorber más hierro'},
-{id:'d11',name:'Batido hipercalórico de banano y maní',emoji:'🥤',time:'5 min',desc:'Batido espeso de banano, leche entera y maní + tostadas.',ings:[{n:'Banano',q:3,u:'und'},{n:'Leche',q:2,u:'tazas'},{n:'Mantequilla de maní',q:3,u:'cda'},{n:'Miel',q:2,u:'cda'},{n:'Pan integral',q:4,u:'tajadas'}],kidFriendly:true,kidNote:'🔥 MÁS CALORÍAS: diseñado para ayudar a Thiago a ganar peso de forma saludable'},
-{id:'d12',name:'Arroz con leche y fruta',emoji:'🍚',time:'20 min',desc:'Arroz con leche entero, canela y fruta de temporada.',ings:[{n:'Arroz',q:1,u:'taza'},{n:'Leche',q:3,u:'tazas'},{n:'Azúcar',q:2,u:'cda'},{n:'Canela',q:1,u:'pizca'},{n:'Mango',q:1,u:'und'}],kidFriendly:true,kidNote:'⚡ Energía fácil + calcio. Dulce que Thiago come con ganas'},
-{id:'d13',name:'Tajadas de maduro con huevo y queso',emoji:'🍌',time:'15 min',desc:'Tajadas doradas de plátano maduro con huevo y queso.',ings:[{n:'Plátano maduro',q:2,u:'und'},{n:'Huevos',q:3,u:'und'},{n:'Queso blanco',q:100,u:'g'},{n:'Aceite',q:2,u:'cda'}],kidFriendly:true,kidNote:'💪 Potasio + zinc + calcio. Colores dorados que invitan a Thiago a comer'},
-{id:'d14',name:'Revuelto de champiñones con papa',emoji:'🍄',time:'20 min',desc:'Champiñones salteados con papa cocida y huevo revuelto.',ings:[{n:'Champiñones',q:200,u:'g'},{n:'Papa',q:2,u:'und'},{n:'Huevos',q:3,u:'und'},{n:'Cebolla',q:0.5,u:'und'},{n:'Aceite de oliva',q:2,u:'cda'}],kidFriendly:true,kidNote:'⚡ Zinc de los champiñones + huevos estimulan el apetito de Thiago'},
+{id:'d1',name:'Huevos revueltos con arepa y jugo',emoji:'🍳',time:'15 min',
+ desc:'Huevos esponjosos con mantequilla, arepa dorada y jugo de naranja natural.',
+ ings:[{n:'Huevos',q:4,u:'und'},{n:'Arepa',q:3,u:'und'},{n:'Mantequilla',q:1,u:'cda'},{n:'Naranja',q:3,u:'und'}],
+ kidFriendly:true,kidNote:'⚡ Zinc + hierro del huevo con vitamina C del jugo = energía para todo el día de Thiago'},
+
+{id:'d2',name:'Caldo de costilla (desayuno)',emoji:'🍵',time:'50 min',
+ desc:'Caldo reconfortante de costilla de res con papa, cilantro y arepa. Desayuno colombiano.',
+ ings:[{n:'Costilla de res',q:400,u:'g'},{n:'Papa',q:3,u:'und'},{n:'Cebolla larga',q:2,u:'und'},{n:'Cilantro',q:0.5,u:'atado'},{n:'Ajo',q:2,u:'dientes'},{n:'Arepa',q:3,u:'und'}],
+ kidFriendly:true,kidNote:'⚡ Hierro HEM de la costilla + colágeno para los huesos. El más nutritivo de Colombia'},
+
+{id:'d3',name:'Huevos pericos con hogao y arepa',emoji:'🍳',time:'15 min',
+ desc:'Huevos revueltos con tomate y cebolla fritos en hogao. Arepa dorada.',
+ ings:[{n:'Huevos',q:4,u:'und'},{n:'Tomate',q:2,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Aceite',q:1,u:'cda'},{n:'Arepa',q:3,u:'und'},{n:'Cilantro',q:0.25,u:'atado'}],
+ kidFriendly:true,kidNote:'⚡ Zinc + proteína del huevo. El hogao aporta vitamina C para absorber más hierro'},
+
+{id:'d4',name:'Changua con huevo escalfado',emoji:'🥛',time:'15 min',
+ desc:'Sopa de leche con huevo escalfado y pan. Tradición colombiana llena de calcio.',
+ ings:[{n:'Leche',q:3,u:'tazas'},{n:'Huevos',q:3,u:'und'},{n:'Pan',q:3,u:'tajadas'},{n:'Cebolla larga',q:2,u:'und'},{n:'Cilantro',q:0.25,u:'atado'}],
+ kidFriendly:true,kidNote:'🦴 Calcio + proteína completa. Perfecto para el crecimiento de Thiago'},
+
+{id:'d5',name:'Avena con leche, banano y miel',emoji:'🥣',time:'10 min',
+ desc:'Avena cremosa con leche entera, banano maduro y miel. Sencillo y nutritivo.',
+ ings:[{n:'Avena',q:2,u:'tazas'},{n:'Leche',q:2,u:'tazas'},{n:'Banano',q:2,u:'und'},{n:'Miel',q:2,u:'cda'}],
+ kidFriendly:true,kidNote:'💪 Calcio + potasio del banano + energía sostenida para que Thiago esté activo'},
+
+{id:'d6',name:'Huevos fritos con tajadas y jugo',emoji:'🍳',time:'15 min',
+ desc:'Huevos fritos con tajadas de plátano maduro doradas y jugo de naranja.',
+ ings:[{n:'Huevos',q:4,u:'und'},{n:'Plátano maduro',q:2,u:'und'},{n:'Aceite',q:2,u:'cda'},{n:'Naranja',q:3,u:'und'}],
+ kidFriendly:true,kidNote:'⚡ Hierro del huevo + potasio del plátano + vitamina C del jugo. ¡Thiago lo ama!'},
+
+{id:'d7',name:'Arepa con queso blanco y aguacate',emoji:'🫓',time:'10 min',
+ desc:'Arepa dorada con queso blanco abundante y aguacate cremoso.',
+ ings:[{n:'Arepa',q:3,u:'und'},{n:'Queso blanco',q:200,u:'g'},{n:'Aguacate',q:1,u:'und'},{n:'Mantequilla',q:1,u:'cda'}],
+ kidFriendly:true,kidNote:'🔥 Grasas saludables del aguacate + calcio del queso. Hipercalórico para Thiago'},
+
+{id:'d8',name:'Batido de banano con maní y tostadas',emoji:'🥤',time:'5 min',
+ desc:'Batido espeso de banano, leche y mantequilla de maní. Con tostadas de pan.',
+ ings:[{n:'Banano',q:3,u:'und'},{n:'Leche',q:2,u:'tazas'},{n:'Mantequilla de maní',q:3,u:'cda'},{n:'Miel',q:1,u:'cda'},{n:'Pan integral',q:4,u:'tajadas'}],
+ kidFriendly:true,kidNote:'🔥 HIPERCALÓRICO: diseñado para que Thiago suba de peso de forma sana y deliciosa'},
+
+{id:'d9',name:'Colada de maicena con leche y fruta',emoji:'🥤',time:'10 min',
+ desc:'Colada espesa con leche entera, maicena, canela y banano picado.',
+ ings:[{n:'Maicena',q:3,u:'cda'},{n:'Leche',q:3,u:'tazas'},{n:'Azúcar',q:2,u:'cda'},{n:'Banano',q:1,u:'und'},{n:'Canela',q:1,u:'pizca'}],
+ kidFriendly:true,kidNote:'💧 Calorías fáciles + calcio. Ideal para Thiago cuando no tiene apetito'},
+
+{id:'d10',name:'Huevos revueltos con espinaca y tostadas',emoji:'🥚',time:'15 min',
+ desc:'Huevos con espinaca fresca salteada, tostadas integrales y jugo.',
+ ings:[{n:'Huevos',q:4,u:'und'},{n:'Espinaca',q:100,u:'g'},{n:'Tomate',q:1,u:'und'},{n:'Aceite',q:1,u:'cda'},{n:'Pan integral',q:3,u:'tajadas'},{n:'Naranja',q:2,u:'und'}],
+ kidFriendly:true,kidNote:'⚡ Hierro de la espinaca + zinc del huevo + vitamina C del jugo = máxima energía'}
 ],
+
 almuerzo:[
-{id:'a1',name:'Arroz con pollo y ensalada',emoji:'🍗',time:'40 min',desc:'Arroz esponjoso con pechuga jugosa y ensalada verde.',ings:[{n:'Arroz',q:2,u:'tazas'},{n:'Pechuga de pollo',q:600,u:'g'},{n:'Lechuga',q:0.5,u:'und'},{n:'Tomate',q:2,u:'und'},{n:'Pepino',q:1,u:'und'},{n:'Aceite de oliva',q:2,u:'cda'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:2,u:'dientes'}],kidFriendly:true,kidNote:'💪 Zinc del pollo + proteína completa para el crecimiento de Thiago'},
-{id:'a2',name:'Sopa de lentejas',emoji:'🍲',time:'45 min',desc:'Sopa reconfortante de lentejas con zanahoria y papa.',ings:[{n:'Lentejas',q:300,u:'g'},{n:'Zanahoria',q:2,u:'und'},{n:'Papa',q:3,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Cilantro',q:1,u:'atado'},{n:'Plátano',q:1,u:'und'}],kidFriendly:true,kidNote:'⚡ Hierro vegetal de las lentejas. Dar jugo de naranja de postre triplica la absorción'},
-{id:'a3',name:'Pasta con carne y vegetales',emoji:'🍝',time:'30 min',desc:'Pasta en salsa de tomate con carne molida y pimentón.',ings:[{n:'Pasta',q:400,u:'g'},{n:'Carne molida',q:400,u:'g'},{n:'Tomate',q:3,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:2,u:'dientes'},{n:'Pimentón',q:1,u:'und'},{n:'Aceite',q:2,u:'cda'}],kidFriendly:true,kidNote:'⚡ Hierro de la carne + vitamina C del tomate = máxima absorción de hierro'},
-{id:'a4',name:'Pollo al horno con papas',emoji:'🥔',time:'50 min',desc:'Muslos dorados al horno con papas y brócoli al vapor.',ings:[{n:'Muslos de pollo',q:600,u:'g'},{n:'Papa',q:500,u:'g'},{n:'Brócoli',q:300,u:'g'},{n:'Ajo',q:3,u:'dientes'},{n:'Aceite de oliva',q:3,u:'cda'},{n:'Limón',q:1,u:'und'}],kidFriendly:true,kidNote:'💪 Zinc del pollo + vitamina C del brócoli. Pollo dorado que Thiago ama'},
-{id:'a5',name:'Frijoles con arroz y plátano',emoji:'🫘',time:'60 min',desc:'Frijoles rojos cremosos con arroz y tajadas de plátano.',ings:[{n:'Frijoles',q:400,u:'g'},{n:'Arroz',q:2,u:'tazas'},{n:'Plátano maduro',q:2,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Aceite',q:2,u:'cda'},{n:'Cilantro',q:0.5,u:'atado'}],kidFriendly:true,kidNote:'⚡ Hierro + proteína vegetal + potasio del plátano. Sabor colombiano'},
-{id:'a6',name:'Sopa de verduras con pollo',emoji:'🥣',time:'40 min',desc:'Sopa nutritiva con papa, zanahoria, arveja y pollo.',ings:[{n:'Pechuga de pollo',q:400,u:'g'},{n:'Papa',q:3,u:'und'},{n:'Zanahoria',q:2,u:'und'},{n:'Arveja',q:150,u:'g'},{n:'Cilantro',q:1,u:'atado'},{n:'Cebolla',q:1,u:'und'},{n:'Mazorca',q:1,u:'und'}],kidFriendly:true,kidNote:'🌟 Vitaminas + zinc del pollo. Ideal para días sin apetito'},
-{id:'a7',name:'Carne a la plancha con arroz',emoji:'🥩',time:'25 min',desc:'Carne magra jugosa con arroz y ensalada fresca.',ings:[{n:'Lomo de res',q:600,u:'g'},{n:'Arroz',q:2,u:'tazas'},{n:'Pepino',q:1,u:'und'},{n:'Tomate',q:2,u:'und'},{n:'Limón',q:1,u:'und'},{n:'Aceite de oliva',q:2,u:'cda'},{n:'Ajo',q:2,u:'dientes'}],kidFriendly:true,kidNote:'⚡ HIERRO HEM de la res: el más fácil de absorber. El mejor para la energía de Thiago'},
-{id:'a8',name:'Sancocho de pollo',emoji:'🍛',time:'60 min',desc:'Sancocho de pollo con mazorca, yuca y papa. Sabor colombiano.',ings:[{n:'Pollo',q:800,u:'g'},{n:'Papa',q:3,u:'und'},{n:'Yuca',q:200,u:'g'},{n:'Mazorca',q:2,u:'und'},{n:'Zanahoria',q:2,u:'und'},{n:'Cilantro',q:1,u:'atado'},{n:'Cebolla',q:1,u:'und'}],kidFriendly:true,kidNote:'🔥 Hipercalórico + colágeno para los huesos y articulaciones de Thiago'},
-{id:'a9',name:'Guiso de res con papa y zanahoria',emoji:'🫕',time:'50 min',desc:'Carne de res en guiso espeso con papa y zanahoria.',ings:[{n:'Carne de res',q:500,u:'g'},{n:'Papa',q:3,u:'und'},{n:'Zanahoria',q:2,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Tomate',q:2,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Aceite',q:2,u:'cda'}],kidFriendly:true,kidNote:'⚡ Hierro + zinc de la res + vitamina A de la zanahoria para los ojos'},
-{id:'a10',name:'Arroz con atún y vegetales',emoji:'🐟',time:'25 min',desc:'Arroz salteado con atún, pimentón y arveja.',ings:[{n:'Arroz',q:2,u:'tazas'},{n:'Atún en lata',q:2,u:'und'},{n:'Pimentón',q:1,u:'und'},{n:'Arveja',q:100,u:'g'},{n:'Cebolla',q:0.5,u:'und'},{n:'Aceite de oliva',q:2,u:'cda'}],kidFriendly:true,kidNote:'🧠 Omega-3 del atún para el cerebro y la concentración de Thiago'},
-{id:'a11',name:'Albóndigas en salsa de tomate',emoji:'🍅',time:'40 min',desc:'Albóndigas jugosas en salsa casera de tomate con arroz.',ings:[{n:'Carne molida',q:500,u:'g'},{n:'Tomate',q:4,u:'und'},{n:'Arroz',q:2,u:'tazas'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Pan rallado',q:3,u:'cda'},{n:'Huevos',q:1,u:'und'}],kidFriendly:true,kidNote:'⚡ Hierro de la carne + vitamina C del tomate = combinación perfecta para la energía'},
-{id:'a12',name:'Cazuela de frijoles con aguacate',emoji:'🥑',time:'55 min',desc:'Frijoles negros cremosos con arroz, plátano y aguacate.',ings:[{n:'Frijoles negros',q:400,u:'g'},{n:'Arroz',q:2,u:'tazas'},{n:'Aguacate',q:2,u:'und'},{n:'Plátano maduro',q:1,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:2,u:'dientes'}],kidFriendly:true,kidNote:'🔥 Grasas del aguacate + hierro de los frijoles = calorías densas para Thiago'},
-{id:'a13',name:'Pollo al ajillo con puré y brócoli',emoji:'🧄',time:'45 min',desc:'Pollo en salsa de ajo con puré de papa y brócoli.',ings:[{n:'Pechuga de pollo',q:600,u:'g'},{n:'Papa',q:500,u:'g'},{n:'Brócoli',q:250,u:'g'},{n:'Ajo',q:5,u:'dientes'},{n:'Mantequilla',q:2,u:'cda'},{n:'Leche',q:0.5,u:'taza'},{n:'Aceite de oliva',q:2,u:'cda'}],kidFriendly:true,kidNote:'💪 Zinc del pollo + calcio del puré + vitamina C del brócoli'},
-{id:'a14',name:'Ajiaco de pollo',emoji:'🍵',time:'60 min',desc:'Ajiaco bogotano con pollo, papa criolla y guasca.',ings:[{n:'Pollo',q:600,u:'g'},{n:'Papa criolla',q:300,u:'g'},{n:'Papa pastusa',q:300,u:'g'},{n:'Mazorca',q:2,u:'und'},{n:'Guasca',q:1,u:'paquete'},{n:'Crema de leche',q:1,u:'taza'},{n:'Cilantro',q:1,u:'atado'}],kidFriendly:true,kidNote:'🦴 Colágeno + proteína + calcio de la crema. El plato más nutritivo de Colombia'},
+{id:'a1',name:'Arroz con pollo',emoji:'🍗',time:'45 min',
+ desc:'Arroz esponjoso cocinado con pollo, zanahoria, arveja y ajo. El clásico de la familia.',
+ ings:[{n:'Arroz',q:2,u:'tazas'},{n:'Pechuga de pollo',q:600,u:'g'},{n:'Zanahoria',q:1,u:'und'},{n:'Arveja',q:100,u:'g'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Aceite',q:2,u:'cda'},{n:'Caldo de pollo',q:1,u:'taza'}],
+ kidFriendly:true,kidNote:'💪 Zinc del pollo + proteína completa. El arroz con pollo que todos piden'},
+
+{id:'a2',name:'Sudado de pollo con papa y arroz',emoji:'🍲',time:'45 min',
+ desc:'Pollo sudado en hogao de tomate y cebolla con papas tiernas. Con arroz blanco.',
+ ings:[{n:'Pollo (piezas)',q:800,u:'g'},{n:'Papa',q:4,u:'und'},{n:'Tomate',q:2,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Cilantro',q:0.5,u:'atado'},{n:'Aceite',q:2,u:'cda'},{n:'Arroz',q:2,u:'tazas'}],
+ kidFriendly:true,kidNote:'💪 Zinc del pollo + vitamina C del hogao ayuda a absorber el hierro de Thiago'},
+
+{id:'a3',name:'Sudado de carne con papa y arroz',emoji:'🫕',time:'50 min',
+ desc:'Carne de res sudada en salsa de tomate con papas. Con arroz blanco y ensalada.',
+ ings:[{n:'Carne de res',q:600,u:'g'},{n:'Papa',q:4,u:'und'},{n:'Tomate',q:2,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Cilantro',q:0.5,u:'atado'},{n:'Aceite',q:2,u:'cda'},{n:'Arroz',q:2,u:'tazas'}],
+ kidFriendly:true,kidNote:'⚡ Hierro HEM de la res — el de mejor absorción para la energía de Thiago'},
+
+{id:'a4',name:'Sopa de alas con papa y fideos',emoji:'🍜',time:'50 min',
+ desc:'Sopa sustanciosa de alas de pollo con papa, fideos, zanahoria y mazorca.',
+ ings:[{n:'Alas de pollo',q:800,u:'g'},{n:'Papa',q:3,u:'und'},{n:'Fideos',q:100,u:'g'},{n:'Zanahoria',q:2,u:'und'},{n:'Mazorca',q:1,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Cilantro',q:0.5,u:'atado'},{n:'Ajo',q:2,u:'dientes'}],
+ kidFriendly:true,kidNote:'🦴 Colágeno de las alas + vitamina A de la zanahoria. Sopa que Thiago pide repetir'},
+
+{id:'a5',name:'Carne con brócoli y zucchini',emoji:'🥦',time:'30 min',
+ desc:'Tiras de res saltadas con brócoli y zucchini en salsa de ajo. Con arroz blanco.',
+ ings:[{n:'Carne de res',q:500,u:'g'},{n:'Brócoli',q:300,u:'g'},{n:'Zucchini',q:2,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Salsa de soja',q:2,u:'cda'},{n:'Aceite de oliva',q:2,u:'cda'},{n:'Arroz',q:2,u:'tazas'}],
+ kidFriendly:true,kidNote:'⚡ Hierro de la res + vitamina C del brócoli = hierro absorbido x3 para Thiago'},
+
+{id:'a6',name:'Carne asada con arroz y ensalada',emoji:'🥩',time:'30 min',
+ desc:'Lomo de res a la plancha jugoso, con arroz y ensalada de lechuga y tomate.',
+ ings:[{n:'Lomo de res',q:600,u:'g'},{n:'Arroz',q:2,u:'tazas'},{n:'Lechuga',q:0.5,u:'und'},{n:'Tomate',q:2,u:'und'},{n:'Limón',q:1,u:'und'},{n:'Aceite de oliva',q:2,u:'cda'},{n:'Ajo',q:2,u:'dientes'}],
+ kidFriendly:true,kidNote:'⚡ HIERRO HEM del lomo: el más fácil de absorber. Clave para la energía de Thiago'},
+
+{id:'a7',name:'Pechuga a la plancha con arroz',emoji:'🍗',time:'25 min',
+ desc:'Pechuga marinada al limón y ajo, a la plancha. Con arroz y ensalada.',
+ ings:[{n:'Pechuga de pollo',q:600,u:'g'},{n:'Arroz',q:2,u:'tazas'},{n:'Limón',q:2,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Aceite de oliva',q:2,u:'cda'},{n:'Lechuga',q:0.5,u:'und'},{n:'Tomate',q:2,u:'und'}],
+ kidFriendly:true,kidNote:'💪 Zinc del pollo + proteína magra. Jugosa y sabrosa para toda la familia'},
+
+{id:'a8',name:'Pescado al horno con arroz y ensalada',emoji:'🐟',time:'35 min',
+ desc:'Filete de pescado al horno con limón, ajo y tomate. Con arroz y ensalada.',
+ ings:[{n:'Filete de pescado',q:600,u:'g'},{n:'Arroz',q:2,u:'tazas'},{n:'Limón',q:2,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Tomate',q:2,u:'und'},{n:'Aceite de oliva',q:2,u:'cda'},{n:'Cilantro',q:0.25,u:'atado'}],
+ kidFriendly:true,kidNote:'🧠 Omega-3 del pescado para el cerebro y concentración de Thiago'},
+
+{id:'a9',name:'Pasta con carne molida en salsa de tomate',emoji:'🍝',time:'30 min',
+ desc:'Pasta en salsa de tomate casera con carne molida, ajo y pimentón.',
+ ings:[{n:'Pasta',q:400,u:'g'},{n:'Carne molida',q:400,u:'g'},{n:'Tomate',q:4,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Pimentón',q:1,u:'und'},{n:'Aceite',q:2,u:'cda'}],
+ kidFriendly:true,kidNote:'⚡ Hierro de la carne molida + vitamina C del tomate. La pasta que Thiago termina siempre'},
+
+{id:'a10',name:'Lentejas con arroz y tajadas',emoji:'🍲',time:'45 min',
+ desc:'Lentejas en guiso con zanahoria, cebolla y ajo. Con arroz y tajadas de maduro.',
+ ings:[{n:'Lentejas',q:300,u:'g'},{n:'Arroz',q:2,u:'tazas'},{n:'Plátano maduro',q:2,u:'und'},{n:'Zanahoria',q:1,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:2,u:'dientes'},{n:'Aceite',q:2,u:'cda'},{n:'Cilantro',q:0.25,u:'atado'}],
+ kidFriendly:true,kidNote:'⚡ Hierro de las lentejas + potasio del maduro. Dar jugo de naranja triplica absorción'},
+
+{id:'a11',name:'Frijoles con arroz y aguacate',emoji:'🫘',time:'60 min',
+ desc:'Frijoles rojos cremosos con hogao, arroz blanco, aguacate y patacón.',
+ ings:[{n:'Frijoles',q:400,u:'g'},{n:'Arroz',q:2,u:'tazas'},{n:'Aguacate',q:2,u:'und'},{n:'Plátano verde',q:1,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Aceite',q:2,u:'cda'},{n:'Cilantro',q:0.25,u:'atado'}],
+ kidFriendly:true,kidNote:'🔥 Grasas del aguacate + hierro de los frijoles = calorías densas que Thiago necesita'},
+
+{id:'a12',name:'Arroz con atún y vegetales salteados',emoji:'🐟',time:'25 min',
+ desc:'Arroz salteado con atún en lata, pimentón y arveja. Rápido y nutritivo.',
+ ings:[{n:'Arroz',q:2,u:'tazas'},{n:'Atún en lata',q:2,u:'und'},{n:'Pimentón',q:1,u:'und'},{n:'Arveja',q:100,u:'g'},{n:'Cebolla',q:0.5,u:'und'},{n:'Aceite de oliva',q:2,u:'cda'},{n:'Ajo',q:2,u:'dientes'}],
+ kidFriendly:true,kidNote:'🧠 Omega-3 del atún para el desarrollo cerebral de Thiago'},
+
+{id:'a13',name:'Sancocho de pollo colombiano',emoji:'🍛',time:'60 min',
+ desc:'Sancocho con pollo, papa, yuca, mazorca y zanahoria. Plato bandera.',
+ ings:[{n:'Pollo',q:800,u:'g'},{n:'Papa',q:3,u:'und'},{n:'Yuca',q:200,u:'g'},{n:'Mazorca',q:2,u:'und'},{n:'Zanahoria',q:2,u:'und'},{n:'Cilantro',q:1,u:'atado'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:3,u:'dientes'}],
+ kidFriendly:true,kidNote:'🔥 Hipercalórico + colágeno para los huesos y articulaciones de Thiago'},
+
+{id:'a14',name:'Carne en salsa con papas y zanahoria',emoji:'🫕',time:'50 min',
+ desc:'Carne de res en salsa espesa de tomate con papa y zanahoria. Con arroz.',
+ ings:[{n:'Carne de res',q:500,u:'g'},{n:'Papa',q:3,u:'und'},{n:'Zanahoria',q:2,u:'und'},{n:'Tomate',q:3,u:'und'},{n:'Cebolla',q:1,u:'und'},{n:'Ajo',q:3,u:'dientes'},{n:'Aceite',q:2,u:'cda'},{n:'Arroz',q:2,u:'tazas'}],
+ kidFriendly:true,kidNote:'⚡ Hierro + zinc de la res + vitamina A de la zanahoria para los ojos de Thiago'}
 ],
+
 cena:[
-{id:'c1',name:'Crema de ahuyama',emoji:'🎃',time:'35 min',desc:'Crema suave de ahuyama con leche de coco y pan integral.',ings:[{n:'Ahuyama',q:500,u:'g'},{n:'Leche de coco',q:1,u:'taza'},{n:'Cebolla',q:0.5,u:'und'},{n:'Ajo',q:2,u:'dientes'},{n:'Caldo de pollo',q:2,u:'tazas'},{n:'Pan integral',q:3,u:'tajadas'}],kidFriendly:true,kidNote:'🌟 Vitamina A y betacaroteno para los ojos y defensas de Thiago'},
-{id:'c2',name:'Tortilla de huevos con espinaca',emoji:'🥗',time:'15 min',desc:'Tortilla esponjosa con espinaca fresca. Ligera y nutritiva.',ings:[{n:'Huevos',q:5,u:'und'},{n:'Espinaca',q:150,u:'g'},{n:'Cebolla',q:0.5,u:'und'},{n:'Tomate',q:1,u:'und'},{n:'Aceite',q:1,u:'cda'},{n:'Pan integral',q:3,u:'tajadas'}],kidFriendly:true,kidNote:'⚡ Hierro de la espinaca + proteína del huevo. Ligero para dormir bien'},
-{id:'c3',name:'Sopa de fideos con pollo',emoji:'🍜',time:'25 min',desc:'Sopa de fideos con pollo desmenuzado y verduras.',ings:[{n:'Fideos',q:200,u:'g'},{n:'Pechuga de pollo',q:300,u:'g'},{n:'Zanahoria',q:1,u:'und'},{n:'Papa',q:2,u:'und'},{n:'Cilantro',q:0.5,u:'atado'},{n:'Cebolla',q:0.5,u:'und'}],kidFriendly:true,kidNote:'💪 Proteína + zinc del pollo. Suave y fácil de comer para Thiago en la noche'},
-{id:'c4',name:'Sándwich de pollo',emoji:'🥪',time:'15 min',desc:'Pan integral con pechuga de pollo, lechuga y tomate.',ings:[{n:'Pan integral',q:6,u:'tajadas'},{n:'Pechuga de pollo',q:300,u:'g'},{n:'Lechuga',q:0.25,u:'und'},{n:'Tomate',q:1,u:'und'},{n:'Mayonesa light',q:2,u:'cda'},{n:'Mostaza',q:1,u:'cda'}],kidFriendly:true,kidNote:'💪 Zinc y proteína del pollo. Práctico que Thiago puede pedir solo'},
-{id:'c5',name:'Quesadillas con vegetales',emoji:'🫔',time:'20 min',desc:'Quesadillas crujientes con queso, pimentón y cebolla.',ings:[{n:'Tortillas de maíz',q:6,u:'und'},{n:'Queso blanco',q:200,u:'g'},{n:'Pimentón',q:1,u:'und'},{n:'Cebolla',q:0.5,u:'und'},{n:'Tomate',q:1,u:'und'},{n:'Aceite',q:1,u:'cda'}],kidFriendly:true,kidNote:'🦴 Calcio del queso + vitamina C del pimentón. ¡A Thiago le encantan!'},
-{id:'c6',name:'Ensalada de atún',emoji:'🐟',time:'10 min',desc:'Atún con lechuga, tomate, aguacate y limón.',ings:[{n:'Atún en lata',q:2,u:'und'},{n:'Lechuga',q:0.5,u:'und'},{n:'Tomate',q:2,u:'und'},{n:'Aguacate',q:1,u:'und'},{n:'Limón',q:1,u:'und'},{n:'Aceite de oliva',q:2,u:'cda'}],kidFriendly:true,kidNote:'🧠 Omega-3 del atún + grasas del aguacate para el cerebro de Thiago'},
-{id:'c7',name:'Hervido de res',emoji:'🍖',time:'60 min',desc:'Costilla de res con papa, zanahoria, yuca y mazorca.',ings:[{n:'Costilla de res',q:500,u:'g'},{n:'Papa',q:3,u:'und'},{n:'Zanahoria',q:2,u:'und'},{n:'Yuca',q:200,u:'g'},{n:'Mazorca',q:1,u:'und'},{n:'Cilantro',q:1,u:'atado'},{n:'Cebolla',q:1,u:'und'}],kidFriendly:true,kidNote:'⚡ Hierro HEM + colágeno de la costilla. El caldo más nutritivo para Thiago'},
-{id:'c8',name:'Caldo de costilla',emoji:'🍵',time:'50 min',desc:'Caldo reconfortante de costilla con papa y cilantro.',ings:[{n:'Costilla de res',q:400,u:'g'},{n:'Papa',q:2,u:'und'},{n:'Cebolla larga',q:2,u:'und'},{n:'Cilantro',q:1,u:'atado'},{n:'Ajo',q:2,u:'dientes'}],kidFriendly:true,kidNote:'⚡ HIERRO HEM + colágeno para la energía y crecimiento de Thiago'},
-{id:'c9',name:'Pasta gratinada con espinaca',emoji:'🧀',time:'35 min',desc:'Pasta gratinada con queso derretido y espinaca.',ings:[{n:'Pasta',q:300,u:'g'},{n:'Queso blanco',q:200,u:'g'},{n:'Espinaca',q:150,u:'g'},{n:'Leche',q:1,u:'taza'},{n:'Mantequilla',q:1,u:'cda'},{n:'Ajo',q:2,u:'dientes'}],kidFriendly:true,kidNote:'🦴 Calcio del queso + hierro de la espinaca. El queso derretido que Thiago ama'},
-{id:'c10',name:'Crema de zanahoria',emoji:'🥕',time:'30 min',desc:'Crema suave de zanahoria con pan integral tostado.',ings:[{n:'Zanahoria',q:5,u:'und'},{n:'Papa',q:2,u:'und'},{n:'Cebolla',q:0.5,u:'und'},{n:'Ajo',q:2,u:'dientes'},{n:'Caldo de pollo',q:2,u:'tazas'},{n:'Pan integral',q:3,u:'tajadas'}],kidFriendly:true,kidNote:'🌟 Vitamina A de la zanahoria para los ojos y defensas. Dulce natural'},
-{id:'c11',name:'Omelette de queso con ensalada',emoji:'🍳',time:'15 min',desc:'Omelette esponjoso de queso con ensalada verde.',ings:[{n:'Huevos',q:4,u:'und'},{n:'Queso blanco',q:100,u:'g'},{n:'Lechuga',q:0.25,u:'und'},{n:'Tomate',q:1,u:'und'},{n:'Aceite',q:1,u:'cda'}],kidFriendly:true,kidNote:'⚡ Zinc + calcio + proteína. Rápido y nutritivo para las noches ocupadas'},
-{id:'c12',name:'Arroz con leche de coco y pollo',emoji:'🥥',time:'35 min',desc:'Arroz con leche de coco y pollo desmenuzado suave.',ings:[{n:'Arroz',q:2,u:'tazas'},{n:'Leche de coco',q:1,u:'taza'},{n:'Pechuga de pollo',q:300,u:'g'},{n:'Cebolla',q:0.5,u:'und'},{n:'Ajo',q:2,u:'dientes'}],kidFriendly:true,kidNote:'🔥 La leche de coco aporta calorías saludables para que Thiago gane peso'},
-{id:'c13',name:'Revuelto de papa y huevo',emoji:'🥚',time:'20 min',desc:'Papa salteada con huevo revuelto y cebolla.',ings:[{n:'Papa',q:3,u:'und'},{n:'Huevos',q:4,u:'und'},{n:'Cebolla',q:0.5,u:'und'},{n:'Aceite',q:2,u:'cda'},{n:'Pan integral',q:3,u:'tajadas'}],kidFriendly:true,kidNote:'⚡ Zinc del huevo + energía de la papa. Sabor que Thiago pide repetir'},
-{id:'c14',name:'Tostadas de aguacate con atún',emoji:'🥑',time:'10 min',desc:'Tostadas con aguacate machacado y atún.',ings:[{n:'Pan integral',q:6,u:'tajadas'},{n:'Aguacate',q:2,u:'und'},{n:'Atún en lata',q:2,u:'und'},{n:'Limón',q:1,u:'und'},{n:'Tomate',q:1,u:'und'}],kidFriendly:true,kidNote:'🔥 Grasas saludables + omega-3. Calorías densas para que Thiago gane peso'},
+{id:'c1',name:'Caldo de costilla con papa y cilantro',emoji:'🍵',time:'50 min',
+ desc:'Caldo reconfortante de costilla de res con papa pastusa y cilantro fresco.',
+ ings:[{n:'Costilla de res',q:400,u:'g'},{n:'Papa',q:2,u:'und'},{n:'Cebolla larga',q:2,u:'und'},{n:'Cilantro',q:0.5,u:'atado'},{n:'Ajo',q:2,u:'dientes'}],
+ kidFriendly:true,kidNote:'⚡ Hierro HEM + colágeno para la energía y crecimiento de Thiago en la noche'},
+
+{id:'c2',name:'Sopa de alas con fideos',emoji:'🍜',time:'40 min',
+ desc:'Sopa ligera de alas de pollo con fideos, zanahoria y papa.',
+ ings:[{n:'Alas de pollo',q:500,u:'g'},{n:'Fideos',q:150,u:'g'},{n:'Papa',q:2,u:'und'},{n:'Zanahoria',q:1,u:'und'},{n:'Cilantro',q:0.25,u:'atado'},{n:'Cebolla',q:0.5,u:'und'},{n:'Ajo',q:2,u:'dientes'}],
+ kidFriendly:true,kidNote:'🦴 Colágeno + zinc del pollo. Suave y fácil de comer para Thiago en la noche'},
+
+{id:'c3',name:'Pasta gratinada con queso y espinaca',emoji:'🧀',time:'35 min',
+ desc:'Pasta al horno con queso blanco derretido y espinaca fresca.',
+ ings:[{n:'Pasta',q:300,u:'g'},{n:'Queso blanco',q:200,u:'g'},{n:'Espinaca',q:150,u:'g'},{n:'Leche',q:1,u:'taza'},{n:'Mantequilla',q:1,u:'cda'},{n:'Ajo',q:2,u:'dientes'}],
+ kidFriendly:true,kidNote:'🦴 Calcio del queso + hierro de la espinaca. El queso derretido que Thiago ama'},
+
+{id:'c4',name:'Huevos revueltos con papa y arepa',emoji:'🥚',time:'20 min',
+ desc:'Papa en cuadritos salteada con huevos revueltos y arepa dorada.',
+ ings:[{n:'Huevos',q:4,u:'und'},{n:'Papa',q:2,u:'und'},{n:'Cebolla',q:0.5,u:'und'},{n:'Aceite',q:2,u:'cda'},{n:'Arepa',q:3,u:'und'}],
+ kidFriendly:true,kidNote:'⚡ Zinc del huevo + energía de la papa. Rápido y Thiago lo pide siempre'},
+
+{id:'c5',name:'Omelette de queso con ensalada',emoji:'🍳',time:'15 min',
+ desc:'Omelette esponjoso de queso blanco con ensalada verde de lechuga y tomate.',
+ ings:[{n:'Huevos',q:4,u:'und'},{n:'Queso blanco',q:100,u:'g'},{n:'Lechuga',q:0.25,u:'und'},{n:'Tomate',q:1,u:'und'},{n:'Aceite',q:1,u:'cda'}],
+ kidFriendly:true,kidNote:'⚡ Zinc + calcio + proteína. Rápido y nutritivo para las noches ocupadas'},
+
+{id:'c6',name:'Crema de zanahoria con pan',emoji:'🥕',time:'30 min',
+ desc:'Crema suave de zanahoria y papa con pan integral tostado.',
+ ings:[{n:'Zanahoria',q:5,u:'und'},{n:'Papa',q:2,u:'und'},{n:'Cebolla',q:0.5,u:'und'},{n:'Ajo',q:2,u:'dientes'},{n:'Caldo de pollo',q:2,u:'tazas'},{n:'Pan integral',q:3,u:'tajadas'}],
+ kidFriendly:true,kidNote:'🌟 Vitamina A de la zanahoria para los ojos y defensas de Thiago. Dulce natural'},
+
+{id:'c7',name:'Arroz con atún salteado',emoji:'🐟',time:'20 min',
+ desc:'Arroz blanco con atún en lata salteado con pimentón y cebolla.',
+ ings:[{n:'Arroz',q:2,u:'tazas'},{n:'Atún en lata',q:2,u:'und'},{n:'Pimentón',q:1,u:'und'},{n:'Cebolla',q:0.5,u:'und'},{n:'Aceite',q:1,u:'cda'},{n:'Ajo',q:2,u:'dientes'}],
+ kidFriendly:true,kidNote:'🧠 Omega-3 del atún para el cerebro de Thiago. Cena rápida y nutritiva'},
+
+{id:'c8',name:'Revuelto de papa, huevo y cebolla',emoji:'🥔',time:'20 min',
+ desc:'Papa cocida en cubos revuelta con huevo y cebolla. Con pan o arepa.',
+ ings:[{n:'Papa',q:3,u:'und'},{n:'Huevos',q:4,u:'und'},{n:'Cebolla',q:0.5,u:'und'},{n:'Aceite',q:2,u:'cda'},{n:'Pan integral',q:3,u:'tajadas'}],
+ kidFriendly:true,kidNote:'⚡ Zinc del huevo + carbohidratos de la papa para energía en la noche'}
 ]};
 
-const SK='menuFamiliar_v4';
-let S={pantry:[],invoices:[],savedMenus:{},shoppingList:[],customRecipes:[],family:{kid:{name:'Thiago',age:4,emoji:'👦'},adult1:{name:'Esposo',age:35,emoji:'👨'},adult2:{name:'Yo',age:30,emoji:'👩'}}};
-function loadS(){try{const d=localStorage.getItem(SK);if(d)S={...S,...JSON.parse(d)};const old=localStorage.getItem('menuFamiliar_v3');if(old&&!localStorage.getItem(SK)){const o=JSON.parse(old);S={...S,pantry:o.pantry||[],invoices:o.invoices||[],savedMenus:o.savedMenus||{},shoppingList:o.shoppingList||[]};}}catch(e){}ensureMenu();}
+// ── MENÚ PLANIFICADO JUNIO 8–30 ──────────────────────────────────────────────
+const PLANNED={
+  '2026-06-08':{desayuno:'d1',almuerzo:'a1',cena:'c1'},
+  '2026-06-09':{desayuno:'d2',almuerzo:'a2',cena:'c2'},
+  '2026-06-10':{desayuno:'d3',almuerzo:'a3',cena:'c3'},
+  '2026-06-11':{desayuno:'d4',almuerzo:'a4',cena:'c4'},
+  '2026-06-12':{desayuno:'d5',almuerzo:'a5',cena:'c5'},
+  '2026-06-13':{desayuno:'d6',almuerzo:'a6',cena:'c6'},
+  '2026-06-14':{desayuno:'d7',almuerzo:'a7',cena:'c7'},
+  '2026-06-15':{desayuno:'d8',almuerzo:'a8',cena:'c8'},
+  '2026-06-16':{desayuno:'d9',almuerzo:'a9',cena:'c1'},
+  '2026-06-17':{desayuno:'d10',almuerzo:'a10',cena:'c2'},
+  '2026-06-18':{desayuno:'d1',almuerzo:'a11',cena:'c3'},
+  '2026-06-19':{desayuno:'d2',almuerzo:'a12',cena:'c4'},
+  '2026-06-20':{desayuno:'d3',almuerzo:'a13',cena:'c5'},
+  '2026-06-21':{desayuno:'d4',almuerzo:'a14',cena:'c6'},
+  '2026-06-22':{desayuno:'d5',almuerzo:'a1',cena:'c7'},
+  '2026-06-23':{desayuno:'d6',almuerzo:'a2',cena:'c8'},
+  '2026-06-24':{desayuno:'d7',almuerzo:'a3',cena:'c1'},
+  '2026-06-25':{desayuno:'d8',almuerzo:'a4',cena:'c2'},
+  '2026-06-26':{desayuno:'d9',almuerzo:'a5',cena:'c3'},
+  '2026-06-27':{desayuno:'d10',almuerzo:'a6',cena:'c4'},
+  '2026-06-28':{desayuno:'d1',almuerzo:'a7',cena:'c5'},
+  '2026-06-29':{desayuno:'d2',almuerzo:'a8',cena:'c6'},
+  '2026-06-30':{desayuno:'d3',almuerzo:'a9',cena:'c7'}
+};
+
+// ── ESTADO ───────────────────────────────────────────────────────────────────
+const SK='menuFamiliar_v5';
+let S={pantry:[],invoices:[],savedMenus:{},shoppingList:[],customRecipes:[],
+  family:{kid:{name:'Thiago',age:4,emoji:'👦'},adult1:{name:'Esposo',age:35,emoji:'👨'},adult2:{name:'Yo',age:30,emoji:'👩'}}};
+
+function loadS(){
+  try{
+    const d=localStorage.getItem(SK);
+    if(d){S={...S,...JSON.parse(d)};}
+    else{
+      // migrar v4 si existe
+      const old=localStorage.getItem('menuFamiliar_v4');
+      if(old){const o=JSON.parse(old);S={...S,pantry:o.pantry||[],invoices:o.invoices||[],shoppingList:o.shoppingList||[],customRecipes:o.customRecipes||[],family:o.family||S.family};}
+    }
+  }catch(e){}
+  ensureMenus();
+}
 function saveS(){try{localStorage.setItem(SK,JSON.stringify(S));}catch(e){}}
 
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
@@ -396,6 +560,17 @@ function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').
 function getAllRcp(){const o={desayuno:[...RCP.desayuno],almuerzo:[...RCP.almuerzo],cena:[...RCP.cena]};(S.customRecipes||[]).forEach(r=>{if(o[r.type])o[r.type].push(r);});return o;}
 function getRcp(id){const all=getAllRcp();for(const t of['desayuno','almuerzo','cena']){const r=all[t].find(r=>r.id===id);if(r)return r;}return null;}
 
+function guessCat(name){
+  const n=name.toLowerCase();
+  if(/pollo|res|carne|costilla|pechuga|pescado|atún|huevo|alas|molida|filete/.test(n))return'p';
+  if(/leche|queso|yogur|crema|mantequilla/.test(n))return'l';
+  if(/arroz|papa|yuca|pasta|fideos|maicena|avena|pan|lenteja|frijol|arveja|arepas|arepa/.test(n))return'g';
+  if(/zanahoria|brócoli|espinaca|cebolla|tomate|pepino|ajo|pimentón|zucchini|cilantro|lechuga|ahuyama|mazorca/.test(n))return'v';
+  if(/banano|mango|naranja|fresa|limón|aguacate|plátano|maduro/.test(n))return'f';
+  if(/aceite|sal|azúcar|miel|canela|soja|orégano|maní|mostaza/.test(n))return'c';
+  return'o';
+}
+
 const DAYS=['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
 const DSHORT=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
 const MONTHS=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -404,28 +579,56 @@ const CAT={v:{cls:'cv',l:'Verduras'},p:{cls:'cp',l:'Proteínas'},l:{cls:'cl',l:'
 let wkOffset=0,curDay=0,menuView='today',listMode='week',pFilter='all';
 
 function getViewMon(){const b=getMonday();b.setDate(b.getDate()+wkOffset*7);return b;}
-function ensureMenu(){const mon=getViewMon();const ws=dstr(mon);if(!S.savedMenus)S.savedMenus={};if(!S.savedMenus[ws]){S.savedMenus[ws]=genMenu(mon);saveS();}}
+
+// Genera un menú semanal usando recetas planificadas donde aplique
 function genMenu(monday){
   const all=getAllRcp();
   const sd=shuffle([...all.desayuno]);const sa=shuffle([...all.almuerzo]);const sc=shuffle([...all.cena]);
   const days=[];
-  for(let i=0;i<7;i++){const d=new Date(monday);d.setDate(monday.getDate()+i);days.push({date:dstr(d),name:DAYS[i],short:DSHORT[i],desayuno:{recipeId:sd[i%sd.length].id,done:false},almuerzo:{recipeId:sa[i%sa.length].id,done:false},cena:{recipeId:sc[i%sc.length].id,done:false}});}
+  for(let i=0;i<7;i++){
+    const d=new Date(monday);d.setDate(monday.getDate()+i);
+    const dateStr=dstr(d);
+    const plan=PLANNED[dateStr];
+    days.push({date:dateStr,name:DAYS[i],short:DSHORT[i],
+      desayuno:{recipeId:plan?plan.desayuno:sd[i%sd.length].id,done:false},
+      almuerzo:{recipeId:plan?plan.almuerzo:sa[i%sa.length].id,done:false},
+      cena:{recipeId:plan?plan.cena:sc[i%sc.length].id,done:false}});
+  }
   return{weekStart:dstr(monday),days};
 }
-function regenerateMenu(){
-  if(!confirm('¿Generar menú nuevo para esta semana? Los días marcados como "Hecho" se conservarán.'))return;
-  const mon=getViewMon();const ws=dstr(mon);const old=S.savedMenus[ws];const nm=genMenu(mon);
-  if(old)nm.days.forEach((d,i)=>{['desayuno','almuerzo','cena'].forEach(t=>{if(old.days[i]&&old.days[i][t].done){d[t].done=true;d[t].recipeId=old.days[i][t].recipeId;}});});
-  S.savedMenus[ws]=nm;saveS();render();toast('🔀 Nuevo menú generado.','ok');
-}
-function changeWeek(delta){wkOffset+=delta;ensureMenu();const today=dstr(new Date());const m=S.savedMenus[dstr(getViewMon())];const idx=m?m.days.findIndex(d=>d.date===today):-1;curDay=idx>=0?idx:0;render();}
 
+function ensureMenus(){
+  if(!S.savedMenus)S.savedMenus={};
+  // Asegurar menú de semana actual + próximas semanas hasta jul 6
+  const today=new Date();
+  for(let w=-1;w<=4;w++){
+    const mon=getMonday(new Date(today));mon.setDate(mon.getDate()+w*7);
+    const ws=dstr(mon);
+    if(!S.savedMenus[ws]){S.savedMenus[ws]=genMenu(mon);}
+    else{
+      // actualizar días planificados si aún no están marcados como hechos
+      S.savedMenus[ws].days.forEach(day=>{
+        const plan=PLANNED[day.date];
+        if(plan){
+          ['desayuno','almuerzo','cena'].forEach(t=>{
+            if(!day[t].done&&day[t].recipeId!==plan[t])day[t].recipeId=plan[t];
+          });
+        }
+      });
+    }
+  }
+  saveS();
+}
+
+function changeWeek(delta){wkOffset+=delta;ensureMenus();const today=dstr(new Date());const m=S.savedMenus[dstr(getViewMon())];const idx=m?m.days.findIndex(d=>d.date===today):-1;curDay=idx>=0?idx:0;render();}
+
+// ── DESPENSA ─────────────────────────────────────────────────────────────────
 function addPantryForm(){
   const name=document.getElementById('pName').value.trim();const qty=parseFloat(document.getElementById('pQty').value)||1;const unit=document.getElementById('pUnit').value;const cat=document.getElementById('pCat').value;const min=parseFloat(document.getElementById('pMin').value)||0;
   if(!name){toast('Ingresa el nombre.','err');return;}
   addToPantry(name,qty,unit,cat,min);
   document.getElementById('pName').value='';document.getElementById('pQty').value='';document.getElementById('pMin').value='';
-  toast(`✅ ${name} agregado.`,'ok');
+  toast(`✅ ${name} agregado a la despensa.`,'ok');
 }
 function addToPantry(name,qty,unit,cat,min){
   const ex=S.pantry.find(p=>p.name.toLowerCase()===name.toLowerCase());
@@ -445,10 +648,11 @@ function depleteItem(id){const it=S.pantry.find(p=>p.id===id);if(!it)return;addT
 function deductPantry(ings){
   const dep=[];
   ings.forEach(ing=>{const it=S.pantry.find(p=>nmatch(p.name,ing.n));if(it){it.qty=Math.max(0,Math.round((parseFloat(it.qty)-parseFloat(ing.q))*100)/100);if(it.qty===0)dep.push(it.name);}});
-  if(dep.length){dep.forEach(n=>addToList(n,1,'','auto'));toast(`⚠️ Agotado: ${dep.slice(0,2).join(', ')}${dep.length>2?'…':''}. En lista.`,'warn');}
+  if(dep.length){dep.forEach(n=>addToList(n,1,'','auto'));toast(`⚠️ Agotado: ${dep.slice(0,2).join(', ')}${dep.length>2?'…':''}. → lista.`,'warn');}
   saveS();
 }
 
+// ── FACTURAS ──────────────────────────────────────────────────────────────────
 let invRows=[];
 function openFactura(){invRows=[{name:'',qty:1,unit:'und',cat:'o'}];document.getElementById('fStore').value='';document.getElementById('fDate').value=dstr(new Date());document.getElementById('fTotal').value='';renderInvRows();openSheet('fact');}
 function addInvRow(){invRows.push({name:'',qty:1,unit:'und',cat:'o'});renderInvRows();}
@@ -471,6 +675,7 @@ function saveFactura(){
   saveS();renderFacturas();renderDespensa();updateBadges();closeSheet('fact');toast(`✅ Factura guardada. ${items.length} productos en despensa.`,'ok');
 }
 
+// ── LISTA DE MERCADO ──────────────────────────────────────────────────────────
 function addToList(name,qty,unit,source='manual'){
   const ex=S.shoppingList.find(i=>i.name.toLowerCase()===name.toLowerCase()&&!i.checked);
   if(ex){ex.qty=Math.round((parseFloat(ex.qty||0)+parseFloat(qty||0))*100)/100;saveS();renderLista();updateBadges();return;}
@@ -478,15 +683,62 @@ function addToList(name,qty,unit,source='manual'){
   saveS();renderLista();updateBadges();
 }
 function addListForm(){const name=document.getElementById('lName').value.trim();const qty=parseFloat(document.getElementById('lQty').value)||1;const unit=document.getElementById('lUnit').value;if(!name){toast('Ingresa el nombre.','err');return;}addToList(name,qty,unit,'manual');document.getElementById('lName').value='';document.getElementById('lQty').value='';toast(`📝 ${name} agregado.`,'ok');}
-function toggleShop(id){const it=S.shoppingList.find(i=>i.id===id);if(it){it.checked=!it.checked;saveS();renderLista();updateBadges();}}
+
+// Al dar chulito → pasa a la despensa
+function toggleShop(id){
+  const it=S.shoppingList.find(i=>i.id===id);if(!it)return;
+  it.checked=!it.checked;
+  if(it.checked){
+    const cat=guessCat(it.name);
+    addToPantry(it.name,it.qty||1,it.unit||'und',cat,0);
+    toast(`✅ ${it.name} → despensa`,'ok');
+  }
+  saveS();renderLista();updateBadges();
+}
 function delShop(id){S.shoppingList=S.shoppingList.filter(i=>i.id!==id);saveS();renderLista();updateBadges();}
 function clearChecked(){const n=S.shoppingList.filter(i=>i.checked).length;if(!n){toast('No hay tachados.','warn');return;}S.shoppingList=S.shoppingList.filter(i=>!i.checked);saveS();renderLista();updateBadges();toast(`🗑️ ${n} eliminado${n!==1?'s':''}.`,'ok');}
-function setListMode(m){listMode=m;document.querySelectorAll('.lt').forEach((b,i)=>b.classList.toggle('active',i===(m==='week'?0:1)));renderLista();}
+function setListMode(m){listMode=m;document.getElementById('lt-week').classList.toggle('active',m==='week');document.getElementById('lt-month').classList.toggle('active',m==='month');renderLista();}
+
+// Genera lista completa Jun 8-30 basada en menú planificado
+function generateMonthList(){
+  const all={};
+  Object.entries(PLANNED).forEach(([date,plan])=>{
+    ['desayuno','almuerzo','cena'].forEach(t=>{
+      const rcp=getRcp(plan[t]);if(!rcp)return;
+      rcp.ings.forEach(ing=>{
+        const k=ing.n.toLowerCase();
+        if(!all[k])all[k]={name:ing.n,qty:0,unit:ing.u};
+        all[k].qty+=ing.q;
+      });
+    });
+  });
+  let added=0;
+  Object.values(all).forEach(it=>{
+    const ip=S.pantry.find(p=>nmatch(p.name,it.name));
+    const need=Math.max(0,it.qty-(ip?ip.qty:0));
+    if(need>0){addToList(it.name,Math.round(need*10)/10,it.unit,'recipe');added++;}
+  });
+  setListMode('week');
+  toast(added?`📝 ${added} ingredientes agregados a la lista.`:'¡Tienes todo en despensa! ✅','ok');
+}
 
 function getMonthlyItems(){
-  const now=new Date();const all={};
-  for(let w=0;w<6;w++){const mon=new Date(getMonday(new Date(now.getFullYear(),now.getMonth(),1)));mon.setDate(mon.getDate()+w*7);const ws=dstr(mon);const menu=S.savedMenus[ws];if(!menu)continue;menu.days.forEach(day=>{if(new Date(day.date).getMonth()!==now.getMonth())return;['desayuno','almuerzo','cena'].forEach(t=>{const rcp=getRcp(day[t].recipeId);if(!rcp)return;rcp.ings.forEach(ing=>{const k=ing.n.toLowerCase();if(!all[k])all[k]={name:ing.n,qty:0,unit:ing.u};all[k].qty+=ing.q;});});});}
-  return Object.values(all).map(it=>{const ip=S.pantry.find(p=>nmatch(p.name,it.name));const need=Math.max(0,it.qty-(ip?ip.qty:0));return need>0?{...it,qty:Math.round(need*10)/10}:null;}).filter(Boolean).sort((a,b)=>a.name.localeCompare(b.name,'es'));
+  const all={};
+  Object.entries(PLANNED).forEach(([date,plan])=>{
+    ['desayuno','almuerzo','cena'].forEach(t=>{
+      const rcp=getRcp(plan[t]);if(!rcp)return;
+      rcp.ings.forEach(ing=>{
+        const k=ing.n.toLowerCase();
+        if(!all[k])all[k]={name:ing.n,qty:0,unit:ing.u};
+        all[k].qty+=ing.q;
+      });
+    });
+  });
+  return Object.values(all).map(it=>{
+    const ip=S.pantry.find(p=>nmatch(p.name,it.name));
+    const need=Math.max(0,it.qty-(ip?ip.qty:0));
+    return need>0?{...it,qty:Math.round(need*10)/10}:null;
+  }).filter(Boolean).sort((a,b)=>a.name.localeCompare(b.name,'es'));
 }
 
 function toggleMealDone(dayIdx,mealType){
@@ -523,22 +775,21 @@ function downloadTxt(){
   const items=listMode==='month'?getMonthlyItems():S.shoppingList.filter(i=>!i.checked);
   if(!items.length){toast('No hay artículos pendientes.','warn');return;}
   const date=new Date().toLocaleDateString('es-CO',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  let txt=`${listMode==='month'?'LISTA DEL MES':'LISTA DE MERCADO'}\n${date}\n${'─'.repeat(38)}\n\n`;
+  let txt=`LISTA DE MERCADO — MENÚ FAMILIAR\n${date}\n${'─'.repeat(40)}\n\n`;
+  if(listMode==='month')txt+=`INGREDIENTES JUNIO 8–30 (lo que falta)\n\n`;
   items.forEach(it=>{txt+=`☐  ${it.name}${it.qty?' — '+it.qty+(it.unit?' '+it.unit:''):''}\n`;});
-  txt+=`\n${'─'.repeat(38)}\nTotal: ${items.length} artículo${items.length!==1?'s':''}\nMenú Saludable Familiar 🥗`;
-  const blob=new Blob([txt],{type:'text/plain;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`lista-${listMode}-${dstr(new Date())}.txt`;a.click();URL.revokeObjectURL(url);
+  txt+=`\n${'─'.repeat(40)}\nTotal: ${items.length} artículo${items.length!==1?'s':''}\nMenú Saludable Familiar 🥗`;
+  const blob=new Blob([txt],{type:'text/plain;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`lista-mercado-${dstr(new Date())}.txt`;a.click();URL.revokeObjectURL(url);
 }
 
 let toastTimer=null;
 function toast(msg,type=''){const el=document.getElementById('toastEl');el.textContent=msg;el.className='toast '+(type==='ok'?'ok':type==='warn'?'warn':type==='err'?'err':'');el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),3200);}
-
 function openSheet(name){document.getElementById(name+'Ov').classList.add('open');document.getElementById(name+'Sheet').classList.add('open');}
 function closeSheet(name){document.getElementById(name+'Ov').classList.remove('open');document.getElementById(name+'Sheet').classList.remove('open');}
-
-function setView(v){menuView=v;['today','week','month'].forEach((k,i)=>document.getElementById('vt-'+k).classList.toggle('active',k===v));renderMenu();}
-
+function setView(v){menuView=v;['today','week','month'].forEach(k=>document.getElementById('vt-'+k).classList.toggle('active',k===v));renderMenu();}
 function render(){renderMenu();renderDespensa();renderFacturas();renderLista();renderFamilia();updateBadges();}
 
+// ── RENDER MENÚ ───────────────────────────────────────────────────────────────
 function renderMenu(){
   const menu=S.savedMenus[dstr(getViewMon())];
   const today=dstr(new Date());
@@ -547,14 +798,17 @@ function renderMenu(){
   const ws=menu?menu.days[0].date:'';const we=menu?menu.days[6].date:'';
   const wLabel=diffW===0?'Esta semana':diffW===1?'Próxima semana':diffW===-1?'Semana pasada':`${fmtDate(ws)}–${fmtDate(we)}`;
   const now=new Date();
-  document.getElementById('hdrBadge').textContent=menuView==='month'?MONTHS[now.getMonth()]:wLabel;
+  document.getElementById('hdrBadge').textContent=menuView==='month'?MONTHS[now.getMonth()]+' '+now.getFullYear():wLabel;
   const body=document.getElementById('menu-body');
 
   if(menuView==='today'){
-    if(!menu){body.innerHTML='<div class="empty"><div class="ei">📅</div><h3>Sin menú</h3><p>Toca "Nuevo menú" para generar.</p></div>';return;}
+    if(!menu){body.innerHTML='<div class="empty"><div class="ei">📅</div><h3>Sin menú</h3></div>';return;}
     const idx=menu.days.findIndex(d=>d.date===today);
     const dayIdx=idx>=0?idx:curDay;const day=menu.days[dayIdx];
-    body.innerHTML=`<div style="font-size:.82rem;font-weight:800;color:var(--text2);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px">${day.name} ${fmtDate(day.date)}</div>`+renderDayMeals(day,dayIdx);
+    const isPlan=PLANNED[day.date];
+    body.innerHTML=(isPlan?`<div class="plan-banner"><span class="plan-banner-ico">📋</span><div class="plan-banner-txt"><strong>Menú planificado</strong><br>Jun 8–30 · Basado en tus comidas favoritas</div></div>`:'')
+      +`<div style="font-size:.82rem;font-weight:800;color:var(--text2);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px">${day.name} ${fmtDate(day.date)}</div>`
+      +renderDayMeals(day,dayIdx);
   } else if(menuView==='week'){
     if(!menu){body.innerHTML='<div class="empty"><div class="ei">📅</div><h3>Sin menú</h3></div>';return;}
     body.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><button class="mnav-btn" onclick="changeWeek(-1)">◀</button><div style="font-size:.88rem;font-weight:800">${wLabel}</div><button class="mnav-btn" onclick="changeWeek(1)">▶</button></div><div class="dstrip" id="dstrip"></div><div id="dayMealsWrap"></div>`;
@@ -575,11 +829,11 @@ function renderDayMeals(day,dayIdx){
     const inP=n=>S.pantry.find(p=>nmatch(p.name,n));
     return`<div class="meal-lbl">${lbl}</div>
     <div class="meal-card${meal.done?' done':''}">
-      ${meal.done?'<div class="done-pill">✅ Completado</div>':''}
+      ${meal.done?'<div class="done-pill">✅ Hecho</div>':''}
       <div class="meal-hdr"><span class="meal-emo">${rcp.emoji}</span><div><div class="meal-name">${esc(rcp.name)}</div><div class="meal-meta">⏱ ${rcp.time}</div></div></div>
       <div class="meal-desc">${esc(rcp.desc)}</div>
       ${rcp.kidNote?`<div class="kid-note">👦 ${esc(rcp.kidNote)}</div>`:''}
-      <div class="ings-wrap">${rcp.ings.map(ing=>`<span class="ing-chip${!inP(ing.n)?' miss':''}" title="${inP(ing.n)?'En despensa ✓':'No está en despensa'}">${esc(ing.n)}</span>`).join('')}</div>
+      <div class="ings-wrap">${rcp.ings.map(ing=>`<span class="ing-chip${!inP(ing.n)?' miss':''}" title="${inP(ing.n)?'En despensa ✓':'Falta en despensa'}">${esc(ing.n)}</span>`).join('')}</div>
       <button class="btn-done" onclick="toggleMealDone(${dayIdx},'${t}')"${meal.done?' disabled':''}>${meal.done?'✅ Listo':'✓ Marcar como hecho'}</button>
     </div>`;
   }).join('');
@@ -592,7 +846,8 @@ function renderMonthView(body){
   while(cur<=new Date(y,m+1,6)){days.push({date:dstr(cur),day:cur.getDate(),inMonth:cur.getMonth()===m,isToday:dstr(cur)===dstr(now)});const n=new Date(cur);n.setDate(n.getDate()+1);cur=n;}
   body.innerHTML=`<div class="mnav"><div class="mnav-tit">${MONTHS[m]} ${y}</div></div>
     <div class="cal-grid">${DSHORT.map(d=>`<div class="cal-dow">${d}</div>`).join('')}</div>
-    <div class="cal-grid">${days.map(d=>{const ws=dstr(getMonday(new Date(d.date)));const menu=S.savedMenus[ws];const dd=menu&&menu.days.find(x=>x.date===d.date);let dots='';if(dd){['desayuno','almuerzo','cena'].forEach(t=>{const done=dd[t].done;const partDone=Object.values(dd).filter(v=>v&&v.done).length>0&&!Object.values(dd).every(v=>!v||v.done);dots+=`<div class="cd-dot${done?' done':''}"></div>`;});}else{dots='<div class="cd-dot"></div><div class="cd-dot"></div><div class="cd-dot"></div>';}return`<div class="cal-day${d.isToday?' today':''}${!d.inMonth?' other-month':''}" onclick="${d.inMonth?`openDaySheet('${d.date}')`:''}" style="${!d.inMonth?'cursor:default':''}"><div class="cd-num">${d.day}</div><div class="cd-dots">${dots}</div></div>`;}).join('')}</div>`;
+    <div class="cal-grid">${days.map(d=>{const ws=dstr(getMonday(new Date(d.date)));const menu=S.savedMenus[ws];const dd=menu&&menu.days.find(x=>x.date===d.date);const planned=PLANNED[d.date];let dots='';if(dd){['desayuno','almuerzo','cena'].forEach(t=>{dots+=`<div class="cd-dot${dd[t].done?' done':''}"></div>`;});}else{dots='<div class="cd-dot"></div><div class="cd-dot"></div><div class="cd-dot"></div>';}return`<div class="cal-day${d.isToday?' today':''}${!d.inMonth?' other-month':''}${planned?' ':''}" onclick="${d.inMonth?`openDaySheet('${d.date}')`:''}" style="${!d.inMonth?'cursor:default':planned?'border-color:rgba(39,174,96,.35)':''}"><div class="cd-num">${d.day}</div><div class="cd-dots">${dots}</div></div>`;}).join('')}</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:.7rem;color:var(--text2)"><div style="width:10px;height:10px;border-radius:50%;background:var(--g2)"></div>Completado <div style="width:10px;height:10px;border-radius:50%;background:#e5e7eb;margin-left:8px"></div>Pendiente</div>`;
 }
 
 function openDaySheet(dateStr){
@@ -600,39 +855,42 @@ function openDaySheet(dateStr){
   document.getElementById('daySheetTitle').textContent=`📅 ${fmtDate(dateStr)}`;
   const savedOffset=wkOffset;
   if(menu){wkOffset=Math.round((new Date(ws)-getMonday())/604800000);}
-  document.getElementById('daySheetBody').innerHTML=day?renderDayMeals(day,dayIdx):'<p style="color:var(--text2);font-size:.85rem;line-height:1.7">Sin menú para este día. Navega a esa semana y genera el menú primero.</p>';
+  document.getElementById('daySheetBody').innerHTML=day?renderDayMeals(day,dayIdx):'<p style="color:var(--text2);font-size:.85rem;line-height:1.7">Sin menú para este día.</p>';
   wkOffset=savedOffset;
   openSheet('day');
 }
 
+// ── RENDER DESPENSA ───────────────────────────────────────────────────────────
 function renderDespensa(){
   let items=S.pantry;if(pFilter!=='all')items=items.filter(p=>p.cat===pFilter);items=items.slice().sort((a,b)=>a.name.localeCompare(b.name,'es'));
   const grid=document.getElementById('pantryGrid');const empty=document.getElementById('pantryEmpty');
-  if(!items.length){grid.innerHTML='';empty.innerHTML=`<div class="empty"><div class="ei">🛒</div><h3>${pFilter==='all'?'Despensa vacía':'Sin artículos'}</h3><p>${pFilter==='all'?'Agrega productos manualmente o desde una factura.':'Prueba otra categoría.'}</p></div>`;return;}
+  if(!items.length){grid.innerHTML='';empty.innerHTML=`<div class="empty"><div class="ei">🛒</div><h3>${pFilter==='all'?'Despensa vacía':'Sin artículos'}</h3><p>${pFilter==='all'?'Agrega productos manualmente o ingresa una factura.':'Prueba otra categoría.'}</p></div>`;return;}
   empty.innerHTML='';
   grid.innerHTML=items.map(p=>{const cat=CAT[p.cat]||CAT.o;const low=p.min&&p.qty>0&&p.qty<=p.min;const emp=p.qty===0;return`<div class="pitem${low?' low':''}${emp?' empty':''}"><span class="ptag ${cat.cls}">${cat.l}</span><div class="pname" title="${esc(p.name)}">${esc(p.name)}</div><div class="pqr"><span class="pqty">${p.qty}</span><span class="punit">${esc(p.unit)}</span></div>${p.min?`<div style="font-size:.6rem;color:var(--text2)">Mín: ${p.min}</div>`:''}<div class="pctrl"><button class="qbtn" onclick="updateQty('${p.id}',-1)">−</button><button class="qbtn" onclick="updateQty('${p.id}',1)">+</button><button class="pagot" onclick="depleteItem('${p.id}')">Agotado</button></div><button class="pdel" onclick="delPantry('${p.id}')">✕</button></div>`;}).join('');
 }
 
+// ── RENDER FACTURAS ───────────────────────────────────────────────────────────
 function renderFacturas(){
   const list=document.getElementById('invoiceList');
   if(!S.invoices.length){list.innerHTML='<div class="empty"><div class="ei">🧾</div><h3>Sin facturas</h3><p>Agrega tu primera factura para registrar compras y actualizar la despensa.</p></div>';return;}
   list.innerHTML=S.invoices.map(inv=>`<div class="inv-card" onclick="document.getElementById('inv-${inv.id}').classList.toggle('open')"><div class="inv-hdr"><div><div class="inv-store">${esc(inv.store)}</div><div class="inv-meta">${fmtDate(inv.date)} · ${inv.items.length} producto${inv.items.length!==1?'s':''}</div></div><div style="text-align:right">${inv.total?`<div class="inv-total">${fmtCur(inv.total)}</div>`:''}<div style="font-size:.68rem;color:var(--text2);margin-top:2px">Ver detalle ↓</div></div></div><div class="inv-det" id="inv-${inv.id}">${inv.items.map(it=>`<div class="inv-row"><span>${esc(it.name)}</span><span style="color:var(--text2)">${it.qty} ${esc(it.unit)}</span></div>`).join('')}</div></div>`).join('');
 }
 
+// ── RENDER LISTA ──────────────────────────────────────────────────────────────
 function renderLista(){
   const srcL={auto:'Agotado',recipe:'Menú',manual:'Manual'};const srcC={auto:'src-a',recipe:'src-r',manual:'src-m'};
-  document.getElementById('listTitle').textContent=listMode==='month'?'📆 Lista del mes':'🛒 Lista semanal';
-  document.querySelectorAll('.lt').forEach((b,i)=>b.classList.toggle('active',i===(listMode==='week'?0:1)));
+  document.getElementById('listTitle').textContent=listMode==='month'?'📆 Junio 8–30 (lo que falta)':'🛒 Lista de mercado';
   const list=document.getElementById('shopList');
   if(listMode==='month'){
     const items=getMonthlyItems();
-    list.innerHTML=items.length?items.map(it=>`<div class="shop-item"><div class="schk"></div><div class="sinfo"><div class="sname">${esc(it.name)}</div>${it.qty?`<div class="sqty">${it.qty}${it.unit?' '+esc(it.unit):''}</div>`:''}</div><span class="ssrc src-r">Menú</span></div>`).join(''):'<div class="empty" style="padding:20px 0"><div class="ei">✅</div><p>¡Tienes todo para el mes!</p></div>';
+    list.innerHTML=items.length?items.map(it=>`<div class="shop-item"><div class="schk"></div><div class="sinfo"><div class="sname">${esc(it.name)}</div>${it.qty?`<div class="sqty">${it.qty}${it.unit?' '+esc(it.unit):''}</div>`:''}</div><span class="ssrc src-r">Menú</span></div>`).join(''):'<div class="empty" style="padding:20px 0"><div class="ei">✅</div><p>¡Tienes todo para junio!</p></div>';
     return;
   }
   const items=[...S.shoppingList].sort((a,b)=>(a.checked?1:0)-(b.checked?1:0)||a.name.localeCompare(b.name,'es'));
-  list.innerHTML=items.length?items.map(it=>`<div class="shop-item"><div class="schk${it.checked?' on':''}" onclick="toggleShop('${it.id}')">${it.checked?'✓':''}</div><div class="sinfo"><div class="sname${it.checked?' dk':''}">${esc(it.name)}</div>${it.qty?`<div class="sqty">${it.qty}${it.unit?' '+esc(it.unit):''}</div>`:''}</div><span class="ssrc ${srcC[it.source]||'src-m'}">${srcL[it.source]||'Manual'}</span><button class="sdel" onclick="delShop('${it.id}')">✕</button></div>`).join(''):'<div class="empty" style="padding:20px 0"><div class="ei">🛒</div><h3>Lista vacía</h3><p>Los productos agotados aparecen aquí automáticamente.</p></div>';
+  list.innerHTML=items.length?items.map(it=>`<div class="shop-item"><div class="schk${it.checked?' on':''}" onclick="toggleShop('${it.id}')">${it.checked?'✓':''}</div><div class="sinfo"><div class="sname${it.checked?' dk':''}">${esc(it.name)}</div>${it.qty?`<div class="sqty">${it.qty}${it.unit?' '+esc(it.unit):''}</div>`:''}</div><span class="ssrc ${srcC[it.source]||'src-m'}">${srcL[it.source]||'Manual'}</span><button class="sdel" onclick="delShop('${it.id}')">✕</button></div>`).join(''):'<div class="empty" style="padding:20px 0"><div class="ei">🛒</div><h3>Lista vacía</h3><p>Toca "Generar lista Jun 8–30" para empezar, o los productos agotados aparecen aquí solos.</p></div>';
 }
 
+// ── RENDER FAMILIA ─────────────────────────────────────────────────────────────
 function renderFamilia(){
   const f=S.family||{};
   document.getElementById('famCards').innerHTML=[
@@ -643,7 +901,6 @@ function renderFamilia(){
 }
 
 function updateBadges(){const n=S.shoppingList.filter(i=>!i.checked).length;const b=document.getElementById('listaBadge');if(n){b.textContent=n;b.style.display='flex';}else{b.style.display='none';}}
-
 function goScreen(name){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id==='sc-'+name));document.querySelectorAll('.nb').forEach(b=>b.classList.toggle('active',b.dataset.sc===name));}
 
 function init(){
