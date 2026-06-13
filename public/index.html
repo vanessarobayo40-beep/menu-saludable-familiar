@@ -171,7 +171,7 @@ select.fi{cursor:pointer}
 .plan-banner{background:linear-gradient(135deg,#0f4d2b,var(--g));border-radius:12px;padding:13px 16px;margin-bottom:14px;display:flex;align-items:center;gap:10px}
 .plan-banner-txt{font-size:.78rem;color:#fff;font-weight:600;line-height:1.5}
 .plan-banner-ico{font-size:1.6rem;flex-shrink:0}
-@media print{.hdr,.bnav,#sc-menu,#sc-despensa,#sc-facturas,#sc-familia{display:none!important}#sc-lista{display:block!important;padding:0!important}.sdel,.schk,.btn,.ltog{display:none!important}body{background:#fff}}
+@media print{.hdr,.bnav,#sc-menu,#sc-despensa,#sc-facturas,#sc-aseo,#sc-familia{display:none!important}#sc-lista{display:block!important;padding:0!important}.sdel,.schk,.btn,.ltog{display:none!important}body{background:#fff}}
 .install-banner{background:linear-gradient(135deg,#1e40af,#3b82f6);border-radius:12px;padding:13px 16px;margin-bottom:14px;display:flex;align-items:center;gap:10px;position:relative}
 .install-banner-txt{font-size:.78rem;color:#fff;font-weight:600;line-height:1.6;flex:1}
 .install-dis{position:absolute;top:8px;right:8px;background:none;border:none;color:rgba(255,255,255,.7);cursor:pointer;font-size:1rem;padding:4px;font-family:inherit;line-height:1}
@@ -272,6 +272,31 @@ select.fi{cursor:pointer}
   </div>
 </div>
 
+<!-- ASEO -->
+<div class="screen" id="sc-aseo">
+  <div class="card" style="padding:14px">
+    <div class="card-tit" style="margin-bottom:12px">➕ Agregar producto de aseo</div>
+    <div class="fr3" style="margin-bottom:8px">
+      <input class="fi" id="aName" placeholder="Producto" autocomplete="off">
+      <input class="fi" id="aQty" type="number" min="0" step="any" placeholder="Cant.">
+      <select class="fi" id="aUnit"><option>und</option><option>L</option><option>ml</option><option>kg</option><option>g</option><option>rollo</option><option>paquete</option><option>barra</option></select>
+    </div>
+    <button class="btn btn-g" onclick="addAseoForm()">Agregar</button>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:12px">
+    <button class="btn btn-g btn-sm" style="flex:1;justify-content:center" onclick="addAseoBasics()">🧴 Agregar básicos</button>
+    <button class="btn btn-ghost btn-sm" onclick="downloadAseoTxt()">⬇️ TXT</button>
+    <button class="btn btn-ghost btn-sm" onclick="clearAseoChecked()">🗑️</button>
+  </div>
+  <div style="background:var(--gbg);border:1px solid rgba(39,174,96,.2);border-radius:10px;padding:10px 13px;margin-bottom:12px;font-size:.75rem;color:var(--g);font-weight:600;line-height:1.6">
+    🧼 Tu lista de productos de aseo y limpieza del hogar. Da <strong>chulito</strong> a lo que ya compraste.
+  </div>
+  <div class="card">
+    <div class="card-hdr"><div class="card-tit">🧼 Lista de aseo</div></div>
+    <div id="aseoListEl"></div>
+  </div>
+</div>
+
 <!-- FAMILIA -->
 <div class="screen" id="sc-familia">
   <div class="thiago-box">
@@ -290,6 +315,7 @@ select.fi{cursor:pointer}
   <button class="nb" data-sc="despensa"><span class="ni">🥦</span>Despensa</button>
   <button class="nb" data-sc="facturas"><span class="ni">🧾</span>Facturas</button>
   <button class="nb" data-sc="lista"><span class="ni">📝</span>Lista<span class="nbadge" id="listaBadge" style="display:none">0</span></button>
+  <button class="nb" data-sc="aseo"><span class="ni">🧼</span>Aseo<span class="nbadge" id="aseoBadge" style="display:none">0</span></button>
   <button class="nb" data-sc="familia"><span class="ni">👨‍👩‍👦</span>Familia</button>
 </nav>
 </div>
@@ -455,7 +481,7 @@ const PLANNED={
 
 // ── ESTADO ───────────────────────────────────────────────────────────────────
 const SK='menuFamiliar_v5';
-let S={pantry:[],invoices:[],savedMenus:{},shoppingList:[],customRecipes:[],
+let S={pantry:[],invoices:[],savedMenus:{},shoppingList:[],aseoList:[],customRecipes:[],
   family:{kid:{name:'Thiago',age:4,emoji:'👦'},adult1:{name:'Esposo',age:35,emoji:'👨'},adult2:{name:'Yo',age:30,emoji:'👩'}}};
 
 function loadS(){
@@ -622,6 +648,22 @@ function delShop(id){S.shoppingList=S.shoppingList.filter(i=>i.id!==id);saveS();
 function clearChecked(){const n=S.shoppingList.filter(i=>i.checked).length;if(!n){toast('No hay tachados.','warn');return;}S.shoppingList=S.shoppingList.filter(i=>!i.checked);saveS();renderLista();updateBadges();toast(`🗑️ ${n} eliminado${n!==1?'s':''}.`,'ok');}
 function setListMode(m){listMode=m;document.getElementById('lt-week').classList.toggle('active',m==='week');document.getElementById('lt-month').classList.toggle('active',m==='month');renderLista();}
 
+// ── LISTA DE ASEO ──────────────────────────────────────────────────────────────
+const ASEO_BASICS=['Jabón de loza','Detergente ropa','Suavizante','Lavaplatos líquido','Límpido / cloro','Desinfectante','Papel higiénico','Toallas de cocina','Esponjas','Bolsas de basura','Jabón de manos','Shampoo','Crema dental','Escoba / trapero'];
+function addToAseo(name,qty,unit){
+  if(!S.aseoList)S.aseoList=[];
+  const ex=S.aseoList.find(i=>i.name.toLowerCase()===name.toLowerCase()&&!i.checked);
+  if(ex){ex.qty=Math.round((parseFloat(ex.qty||0)+parseFloat(qty||0))*100)/100;saveS();renderAseo();updateBadges();return;}
+  S.aseoList.push({id:uid(),name,qty:parseFloat(qty)||1,unit:unit||'',checked:false});
+  saveS();renderAseo();updateBadges();
+}
+function addAseoForm(){const name=document.getElementById('aName').value.trim();const qty=parseFloat(document.getElementById('aQty').value)||1;const unit=document.getElementById('aUnit').value;if(!name){toast('Ingresa el nombre.','err');return;}addToAseo(name,qty,unit);document.getElementById('aName').value='';document.getElementById('aQty').value='';toast(`🧼 ${name} agregado.`,'ok');}
+function addAseoBasics(){let n=0;ASEO_BASICS.forEach(p=>{if(!(S.aseoList||[]).some(i=>i.name.toLowerCase()===p.toLowerCase()&&!i.checked)){addToAseo(p,1,'und');n++;}});toast(n?`🧴 ${n} básicos agregados.`:'Ya tienes los básicos. ✅','ok');}
+function toggleAseo(id){const it=S.aseoList.find(i=>i.id===id);if(!it)return;it.checked=!it.checked;saveS();renderAseo();updateBadges();}
+function delAseo(id){S.aseoList=S.aseoList.filter(i=>i.id!==id);saveS();renderAseo();updateBadges();}
+function clearAseoChecked(){const n=(S.aseoList||[]).filter(i=>i.checked).length;if(!n){toast('No hay tachados.','warn');return;}S.aseoList=S.aseoList.filter(i=>!i.checked);saveS();renderAseo();updateBadges();toast(`🗑️ ${n} eliminado${n!==1?'s':''}.`,'ok');}
+function downloadAseoTxt(){const items=(S.aseoList||[]).filter(i=>!i.checked);if(!items.length){toast('Lista de aseo vacía.','warn');return;}let txt=`LISTA DE ASEO\n\n`;items.forEach(it=>{txt+=`□ ${it.name}${it.qty?` — ${it.qty}${it.unit?' '+it.unit:''}`:''}\n`;});const blob=new Blob([txt],{type:'text/plain;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`lista-aseo-${dstr(new Date())}.txt`;a.click();URL.revokeObjectURL(url);}
+
 // Genera lista completa Jun 8-30 basada en menú planificado
 function generateMonthList(){
   const all={};
@@ -781,7 +823,7 @@ function toast(msg,type=''){const el=document.getElementById('toastEl');el.textC
 function openSheet(name){document.getElementById(name+'Ov').classList.add('open');document.getElementById(name+'Sheet').classList.add('open');}
 function closeSheet(name){document.getElementById(name+'Ov').classList.remove('open');document.getElementById(name+'Sheet').classList.remove('open');}
 function setView(v){menuView=v;['today','week','month'].forEach(k=>document.getElementById('vt-'+k).classList.toggle('active',k===v));renderMenu();}
-function render(){renderMenu();renderDespensa();renderFacturas();renderLista();renderFamilia();updateBadges();}
+function render(){renderMenu();renderDespensa();renderFacturas();renderLista();renderAseo();renderFamilia();updateBadges();}
 
 // ── RENDER MENÚ ───────────────────────────────────────────────────────────────
 function renderMenu(){
@@ -885,6 +927,13 @@ function renderLista(){
   list.innerHTML=items.length?items.map(it=>`<div class="shop-item"><div class="schk${it.checked?' on':''}" onclick="toggleShop('${it.id}')">${it.checked?'✓':''}</div><div class="sinfo"><div class="sname${it.checked?' dk':''}">${esc(it.name)}</div>${it.qty?`<div class="sqty">${it.qty}${it.unit?' '+esc(it.unit):''}</div>`:''}</div><span class="ssrc ${srcC[it.source]||'src-m'}">${srcL[it.source]||'Manual'}</span><button class="sdel" onclick="delShop('${it.id}')">✕</button></div>`).join(''):'<div class="empty" style="padding:20px 0"><div class="ei">🛒</div><h3>Lista vacía</h3><p>Toca "Generar lista Jun 8–30" para empezar, o los productos agotados aparecen aquí solos.</p></div>';
 }
 
+// ── RENDER ASEO ────────────────────────────────────────────────────────────────
+function renderAseo(){
+  const el=document.getElementById('aseoListEl');if(!el)return;
+  const items=[...(S.aseoList||[])].sort((a,b)=>(a.checked?1:0)-(b.checked?1:0)||a.name.localeCompare(b.name,'es'));
+  el.innerHTML=items.length?items.map(it=>`<div class="shop-item"><div class="schk${it.checked?' on':''}" onclick="toggleAseo('${it.id}')">${it.checked?'✓':''}</div><div class="sinfo"><div class="sname${it.checked?' dk':''}">${esc(it.name)}</div>${it.qty?`<div class="sqty">${it.qty}${it.unit?' '+esc(it.unit):''}</div>`:''}</div><button class="sdel" onclick="delAseo('${it.id}')">✕</button></div>`).join(''):'<div class="empty" style="padding:20px 0"><div class="ei">🧼</div><h3>Lista de aseo vacía</h3><p>Agrega productos o toca "Agregar básicos" para empezar.</p></div>';
+}
+
 // ── RENDER FAMILIA ─────────────────────────────────────────────────────────────
 function renderFamilia(){
   const f=S.family||{};
@@ -895,7 +944,8 @@ function renderFamilia(){
   ].map(m=>`<div class="fam-card"><div class="fam-emo">${m.emoji}</div><div class="fam-info"><div class="fam-name">${esc(m.name)} · ${m.age} años</div><div class="fam-age">${m.desc}</div><div class="fam-tags">${m.tags.map(t=>`<span class="ftag ${t.cls}">${t.l}</span>`).join('')}</div></div></div>`).join('');
 }
 
-function updateBadges(){const n=S.shoppingList.filter(i=>!i.checked).length;const b=document.getElementById('listaBadge');if(n){b.textContent=n;b.style.display='flex';}else{b.style.display='none';}}
+function updateBadges(){const n=S.shoppingList.filter(i=>!i.checked).length;const b=document.getElementById('listaBadge');if(n){b.textContent=n;b.style.display='flex';}else{b.style.display='none';}
+  const na=(S.aseoList||[]).filter(i=>!i.checked).length;const ba=document.getElementById('aseoBadge');if(ba){if(na){ba.textContent=na;ba.style.display='flex';}else{ba.style.display='none';}}}
 function goScreen(name){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id==='sc-'+name));document.querySelectorAll('.nb').forEach(b=>b.classList.toggle('active',b.dataset.sc===name));}
 
 function init(){
@@ -906,6 +956,7 @@ function init(){
   document.querySelectorAll('.ov').forEach(ov=>{ov.addEventListener('click',e=>{if(e.target===ov){const name=ov.id.replace('Ov','');closeSheet(name);}});});
   document.getElementById('pName').addEventListener('keydown',e=>{if(e.key==='Enter')addPantryForm();});
   document.getElementById('lName').addEventListener('keydown',e=>{if(e.key==='Enter')addListForm();});
+  document.getElementById('aName').addEventListener('keydown',e=>{if(e.key==='Enter')addAseoForm();});
   addInvRow();render();initPWA();
   if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 }
