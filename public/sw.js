@@ -1,4 +1,4 @@
-const CACHE = 'menu-familiar-v2';
+const CACHE = 'menu-familiar-v3';
 const FILES = ['./index.html', './manifest.json', './icon.svg'];
 
 self.addEventListener('install', e => {

@@ -308,6 +308,12 @@ select.fi{cursor:pointer}
     <div class="thiago-tip">💡 <span>Vitamina C con alimentos de hierro <strong>triplica</strong> la absorción — dale jugo de naranja.</span></div>
   </div>
   <div id="famCards"></div>
+  <div class="card" id="installCard" style="padding:16px;margin-top:14px">
+    <div class="card-tit" style="margin-bottom:6px">📲 Descargar la app</div>
+    <div style="font-size:.78rem;color:var(--text2);line-height:1.6;margin-bottom:12px">Instálala en tu teléfono para abrirla desde la pantalla de inicio, sin entrar al navegador.</div>
+    <button class="btn btn-b btn-full" onclick="installApp()" style="padding:13px">📲 Instalar app</button>
+    <div id="installHelp" style="display:none;margin-top:12px;background:var(--gbg);border:1px solid rgba(39,174,96,.2);border-radius:10px;padding:12px 14px;font-size:.76rem;color:var(--text);line-height:1.7"></div>
+  </div>
 </div>
 
 <nav class="bnav">
@@ -784,7 +790,7 @@ function refreshShopListFromRecipes(){
 let deferredInstallPrompt=null;
 function initPWA(){
   const isStandalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
-  if(isStandalone)return;
+  if(isStandalone){const c=document.getElementById('installCard');if(c)c.style.display='none';return;}
   const isDismissed=localStorage.getItem('install_dismissed');
   const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
   if(isIOS&&!isDismissed){
@@ -796,7 +802,7 @@ function initPWA(){
     e.preventDefault();deferredInstallPrompt=e;
     if(!isDismissed){const b=document.getElementById('installBanner');if(b)b.style.display='block';}
   });
-  window.addEventListener('appinstalled',()=>{const b=document.getElementById('installBanner');if(b)b.style.display='none';deferredInstallPrompt=null;toast('✅ App instalada. Ábrela desde tu pantalla de inicio.','ok');});
+  window.addEventListener('appinstalled',()=>{const b=document.getElementById('installBanner');if(b)b.style.display='none';const c=document.getElementById('installCard');if(c)c.style.display='none';deferredInstallPrompt=null;toast('✅ App instalada. Ábrela desde tu pantalla de inicio.','ok');});
 }
 async function doInstall(){
   if(!deferredInstallPrompt)return;
@@ -806,6 +812,29 @@ async function doInstall(){
   deferredInstallPrompt=null;
 }
 function dismissInstall(){const b=document.getElementById('installBanner');if(b)b.style.display='none';localStorage.setItem('install_dismissed','1');}
+// Botón permanente "Descargar app" (sección Familia)
+async function installApp(){
+  const isStandalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
+  if(isStandalone){toast('✅ Ya tienes la app instalada.','ok');return;}
+  if(deferredInstallPrompt){
+    deferredInstallPrompt.prompt();
+    const r=await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt=null;
+    if(r.outcome==='accepted'){toast('✅ Instalando app…','ok');}
+    return;
+  }
+  // Sin instalación automática → mostrar instrucciones según el dispositivo
+  const ua=navigator.userAgent;
+  const isIOS=/iPad|iPhone|iPod/.test(ua)&&!window.MSStream;
+  const help=document.getElementById('installHelp');if(!help)return;
+  if(isIOS){
+    help.innerHTML='<strong>En iPhone/iPad (Safari):</strong><br>1️⃣ Toca el botón <strong>Compartir ⬆️</strong> abajo.<br>2️⃣ Baja y toca <strong>"Añadir a pantalla de inicio"</strong>.<br>3️⃣ Toca <strong>"Añadir"</strong>. ✅';
+  }else{
+    help.innerHTML='<strong>En Android (Chrome):</strong><br>1️⃣ Toca los <strong>3 puntos ⋮</strong> arriba a la derecha.<br>2️⃣ Toca <strong>"Instalar app"</strong> o <strong>"Agregar a pantalla de inicio"</strong>.<br>3️⃣ Confirma <strong>"Instalar"</strong>. ✅';
+  }
+  help.style.display='block';
+  help.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
 
 function downloadTxt(){
   const items=listMode==='month'?getMonthlyItems():S.shoppingList.filter(i=>!i.checked);
